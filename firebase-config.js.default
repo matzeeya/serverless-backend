@@ -1,0 +1,10 @@
+module.exports = {
+  apiKey: "xxxx",
+  authDomain: "xxxx.firebaseapp.com",
+  databaseURL: "https://xxxxx.firebaseio.com",
+  projectId: "Your projectId",
+  storageBucket: "xxx.appspot.com",
+  messagingSenderId: "xxx",
+  appId: "xxx",
+  measurementId: "xxx",
+};
