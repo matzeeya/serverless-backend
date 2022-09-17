@@ -16,6 +16,8 @@ module.exports = {
     'object-curly-spacing': 'off',
     'linebreak-style': 0,
     'no-undef': 0,
+    'max-len': 'off',
+    'eol-last': 0,
     indent: ['off'],
     'require-jsdoc': 0,
     camelcase: 'off',
