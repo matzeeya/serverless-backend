@@ -1,0 +1,9 @@
+const config = {
+  accessToken: 'xxx', // YOUR LINE TOKEN
+  serviceAccountPath: './serviceAccount.json',
+  databaseURL: 'xxx.firebaseio.com', // YOUR URL firestore
+  bitly: 'xxx', // bitly token
+  dialogflow: 'https://dialogflow.cloud.google.com/v1/integrations/line/webhook/xxx', // dialogflow webhook
+  LIFF_URL: 'https://liff.line.me/xxx', // LIFF
+  LIFF_ID: 'xxx' // LIFF
+};
