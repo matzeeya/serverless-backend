@@ -12,7 +12,7 @@
     ]
   },
   "hosting": {
-    "public": "public",
+    "public": "vue-project/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -20,8 +20,8 @@
     ],
     "rewrites": [
       {
-        "source": "/api/**",
-        "function": "api"
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   },
