@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-  import firebase from "../../db/firebase"
+  import firebase from "../../../firebase-config/vue/firebase"
   const userRegister = firebase.collection("userRegister")
   export default {
     name: 'App',

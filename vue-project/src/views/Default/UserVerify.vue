@@ -20,7 +20,7 @@
 <script>
 // import axios from axios
 import Swal from 'sweetalert2'
-import firestore from "../../../db/firebase"
+import firestore from "../../../../firebase-config/vue/firebase"
 const userRegister = firestore.collection("userRegister")
 
 export default {

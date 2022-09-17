@@ -15,7 +15,7 @@
   </b-field>
 </template>
 <script>
-import firestore from "../../db/firebase"
+import firestore from "../../../firebase-config/vue/firebase"
 export default {
   name: 'Prename',
   props:{

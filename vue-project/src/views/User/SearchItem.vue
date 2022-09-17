@@ -8,7 +8,7 @@
 </div>
 </template>
 <script>
-import firestore from "../../../db/firebase"
+import firestore from "../../../../firebase-config/vue/firebase"
 const searchItem = firestore.collection("items")
 export default {
   name:'SearchInventory',

@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-  import firestore, { storage } from "../../../db/firebase"
+  import firestore, { storage } from "../../../../firebase-config/vue/firebase"
 
   export default {
     name:'AddItem',
