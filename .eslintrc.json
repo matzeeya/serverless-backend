@@ -39,7 +39,13 @@
         "prefer-destructuring": ["error", { "object": true, "array": false }],
         "no-unused-vars": ["warn", { "argsIgnorePattern": "req|res|next|val|err" }],
         "node/no-unpublished-require": 0,
-        "node/no-missing-require": 0
+        "node/no-missing-require": 0,
+        "vars-on-top": "off",
+        "no-undef": 0,
+        "camelcase": "off",
+        "no-var": 0,
+        "radix": 0,
+        "prefer-template": 0
     },
     "settings": {
         "import/resolver": {

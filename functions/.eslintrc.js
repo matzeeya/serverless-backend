@@ -15,7 +15,10 @@ module.exports = {
     'array-bracket-spacing': ['error', 'never'],
     'object-curly-spacing': 'off',
     'linebreak-style': 0,
-    'no-undef': 'error',
+    'no-undef': 0,
     indent: ['off'],
+    'require-jsdoc': 0,
+    camelcase: 'off',
+    'prefer-template': 'off',
   },
 };
