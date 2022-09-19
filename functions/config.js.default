@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const config = {
   accessToken: 'xxx', // YOUR LINE TOKEN
   serviceAccountPath: './serviceAccount.json',
@@ -7,3 +8,4 @@ const config = {
   LIFF_URL: 'https://liff.line.me/xxx', // LIFF
   LIFF_ID: 'xxx' // LIFF
 };
+/* eslint-disable no-unused-vars */

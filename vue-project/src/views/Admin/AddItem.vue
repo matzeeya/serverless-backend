@@ -3,14 +3,14 @@
     <form @submit.prevent="submitHandler">
       <article class="panel is-primary">
         <p class="panel-heading">
-          ลงทะเบียนผู้ใช้ใหม่
+          เพิ่มรายการครุภัณฑ์
         </p> 
         <div class="panel-block">
           <div class="columns is-desktop">
             <div class="column">
-              <b-field label="อัพโหลดรูปเพื่อยืนยันตัวตน"
+              <b-field label="อัพโหลดรูปครุภัณฑ์"
                 type="is-info"
-                message="กรุณาถ่ายบัตรนักศึกษาหรือบัตรพนักงานเพื่อยืนยันตัวตน">
+                message="กรุณาอัพโหลดรูปครุภัณฑ์">
                 <b-field class="file is-primary" :class="{'has-name': !!file}">
                   <b-upload id="file" 
                     name="file"
@@ -65,18 +65,14 @@
         const addUser = firestore.collection("userRegister");
         addUser.add(obj)
           .then(()=>{
-            console.log("ลงทะเบียนสำเร็จ")
+            console.log("เพิ่มข้อมูลสำเร็จ")
             this.isSuccessType = "is-success"
-            this.isSuccessMsg = "ลงทะเบียนสำเร็จ"
+            this.isSuccessMsg = "เพิ่มข้อมูลสำเร็จ"
           })
           .catch(err => console.log(err));
       },
       clearData(){
-        this.email = null;
-        this.fname = null;
-        this.lname = null;
-        this.pid = null;
-        this.phone = null;
+        //
       },
       async submitHandler(){
         if(this.file && this.file.name){
@@ -87,19 +83,7 @@
           await targetRef.put(this.file).then(response => {
             response.ref.getDownloadURL().then(photoURL =>{
               const obj = {
-                email:this.email,
-                pid:this.pid,
-                pname:this.pname,
-                fname:this.fname,
-                lname:this.lname,
-                usertype:this.usertype,
-                stuid:this.stuid,
-                phone:this.phone,
-                userid:null,
-                link:photoURL,
-                verify:"true",
-                approve:"false",
-                comment:null
+                //
               };
               this.addUserRegister(obj);
             });
@@ -107,7 +91,7 @@
         }else{
           console.log("no file Upload");
           this.isSuccessType = "is-danger"
-          this.isSuccessMsg = "กรุณาอัพโหลดรูปเพื่อยืนยันตัวตน"
+          this.isSuccessMsg = "กรุณาอัพโหลดรูปครุภัณฑ์"
         }
       }
     }
