@@ -9,6 +9,8 @@ firebase-debug.*.log*
 
 firebase-config/node/firebase.js
 firebase-config/vue/firebase.js
+
+liff-config/config.js
 # Firebase cache
 .firebase/
 

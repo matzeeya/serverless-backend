@@ -4,8 +4,8 @@ import Home from './views/Home.vue'
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
 import Profile from './views/Default/UserProfile.vue'
-import Verify from './views/Default/UserVerify.vue'
 import SearchItem from './views/User/SearchItem.vue'
+import Verify from './views/Admin/UserVerify.vue'
 
 Vue.use(VueRouter)
 

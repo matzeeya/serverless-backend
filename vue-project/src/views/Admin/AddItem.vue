@@ -53,6 +53,7 @@
     data(){
       return {
         file: {},
+        photo:null,
       }
     },
     watch:{
@@ -76,14 +77,14 @@
       },
       async submitHandler(){
         if(this.file && this.file.name){
-          const userPicRef = storage.child("photos/"+this.pid);
+          const userPicRef = storage.child("item/"+this.pid);
           const random = Math.random();
           const filename = Date.now()+"_"+random.toString().substring(2,8)+".jpg";
           const targetRef = userPicRef.child(filename);
           await targetRef.put(this.file).then(response => {
             response.ref.getDownloadURL().then(photoURL =>{
               const obj = {
-                //
+                photo:photoURL
               };
               this.addUserRegister(obj);
             });
