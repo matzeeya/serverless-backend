@@ -138,13 +138,13 @@ Use powershell or cmd and type by order, please see below.
 
 # How to deploy the hosting in firebase
 
-`npm run build`
-`firebase deploy --only hosting`
+- `npm run build`
+- `firebase deploy --only hosting`
 
 # How to deploy the Local Emulator hosting in vue.js (local dev)
 
-`npm run build`
-`firebase emulators:start --only hosting`
+- `npm run build`
+- `firebase emulators:start --only hosting`
 
 # Test URL for local dev
 
