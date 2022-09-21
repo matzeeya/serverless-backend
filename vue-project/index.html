@@ -38,6 +38,8 @@
   
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+      const line = require('../line-config/config')
+
       function createUniversalLink(){
       const link1 = liff.permanentLink.createUrl()
       document.getElementById("universalLink1").append(link1)
@@ -144,7 +146,7 @@
           createUniversalLink()
         }
       })
-        await liff.init({ liffId: '1657280459-K8l6ZJWY' })
+        await liff.init({ liffId: line.liffID })
       }
       main()
     </script>

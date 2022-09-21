@@ -1,7 +1,5 @@
-const liffID = 'xxx'
-const liffUrl = 'https://liff.line.me/' + liffID
+const liffID = 'xxx';
+const liffUrl = 'https://liff.line.me/' + liffID;
 
-export {
-  liffID,
-  liffUrl
-}
+// eslint-disable-next-line prettier/prettier
+module.exports = { liffID, liffUrl };
