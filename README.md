@@ -51,15 +51,86 @@ Use powershell or cmd and type by order, please see below.
   > at config.js file to modify value,
 
   ```javascript
+  /* eslint-disable no-unused-vars */
   const config = {
     accessToken: 'xxx', // YOUR LINE TOKEN
     serviceAccountPath: './serviceAccount.json',
     databaseURL: 'xxx.firebaseio.com', // YOUR URL firestore
+    bitly: 'xxx', // YOUR bitly token, If u need generated short URL
+    dialogflow: 'https://dialogflow.cloud.google.com/v1/integrations/line/webhook/xxx', // YOUR dialogflow webhook
+    LIFF_URL: 'https://liff.line.me/xxx', // LIFF
+    LIFF_ID: 'xxx' // LIFF
   };
+  /* eslint-disable no-unused-vars */
   ```
 
 - > To deploy Please back to root project (serverless-backend) and type command below and enter to deploy function.
 - `firebase deploy --only functions`
+
+- `Created file config connect firestore for node`
+- > cd firebase-config/node
+- > `cp firebase.config.js.default firebase.config.js`
+
+  ```javascript
+  const firebase = require('firebase/compat/app');
+
+  require('firebase/compat/firestore');
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: 'xxx',
+    authDomain: 'xxx.firebaseapp.com',
+    projectId: 'xxx',
+    storageBucket: 'xxx.appspot.com',
+    messagingSenderId: 'xxx',
+    appId: 'xxx'
+  };
+  // Initialize Firebase
+  const firebaseApp = firebase.initializeApp(firebaseConfig)
+  const database = firebaseApp.firestore();
+  module.exports = database;
+  ```
+- `Created file config connect firestore for Vue.js`
+- > cd firebase-config/vue
+- > `cp firebase.config.js.default firebase.config.js`
+
+  ```javascript
+  /* eslint-disable node/no-unsupported-features/es-syntax */
+  // Import the functions you need from the SDKs you need
+  import firebase from 'firebase/compat/app';
+  import 'firebase/compat/firestore';
+  import 'firebase/compat/auth';
+  import 'firebase/compat/storage';
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: 'xxx',
+    authDomain: 'xxx.firebaseapp.com',
+    projectId: 'xxx',
+    storageBucket: 'xxx.appspot.com',
+    messagingSenderId: 'xxx',
+    appId: 'xxx'
+  };
+
+  // Initialize Firebase
+  const firebaseApp = firebase.initializeApp(firebaseConfig);
+  const database = firebaseApp.firestore();
+  export const auth = firebase.auth();
+  export const storage = firebase.storage().ref();
+  export default database;
+  ```
+
+- `Created LINE config`
+- > cd line-config
+- > `cp config.js.default config.js`
+
+  ```javascript
+  const liffID = 'xxx';
+  const liffUrl = 'https://liff.line.me/' + liffID;
+
+  // eslint-disable-next-line prettier/prettier
+  module.exports = { liffID, liffUrl };
+  ```
 
 # How to install the Local Emulator Suite
 
