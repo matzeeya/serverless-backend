@@ -90,6 +90,7 @@ Use powershell or cmd and type by order, please see below.
   const database = firebaseApp.firestore();
   module.exports = database;
   ```
+  
 - `Created file config connect firestore for Vue.js`
 - > cd firebase-config/vue
 - > `cp firebase.config.js.default firebase.config.js`
