@@ -1,7 +1,0 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
-const liffapp = {
-  LiffID: 'xxx',
-  LiffUrl: 'https://liff.line.me/xxx',
-};
-
-export default liffapp;

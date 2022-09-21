@@ -1,0 +1,7 @@
+const liffID = 'xxx'
+const liffUrl = 'https://liff.line.me/' + liffID
+
+export {
+  liffID,
+  liffUrl
+}
