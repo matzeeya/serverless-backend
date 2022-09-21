@@ -90,7 +90,7 @@ Use powershell or cmd and type by order, please see below.
   const database = firebaseApp.firestore();
   module.exports = database;
   ```
-  
+
 - `Created file config connect firestore for Vue.js`
 - > cd firebase-config/vue
 - > `cp firebase.config.js.default firebase.config.js`
@@ -132,6 +132,23 @@ Use powershell or cmd and type by order, please see below.
   // eslint-disable-next-line prettier/prettier
   module.exports = { liffID, liffUrl };
   ```
+
+- `cd vue-project`
+- `npm install`
+
+# How to deploy the hosting in firebase
+
+`npm run build`
+`firebase deploy --only hosting`
+
+# How to deploy the Local Emulator hosting in vue.js (local dev)
+
+`npm run build`
+`firebase emulators:start --only hosting`
+
+# Test URL for local dev
+
+http://localhost:5000
 
 # How to install the Local Emulator Suite
 
