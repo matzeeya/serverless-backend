@@ -104,6 +104,8 @@
   import firestore, { storage } from "../../../../firebase-config/vue/firebase"
   import ListPrename from '../../components/ListPrename.vue'
   import ListUserType from '../../components/ListUserType.vue'
+  import Swal from 'sweetalert2'
+  const line = require('../../../../line-config/config')
 
   export default {
     name:'App',
@@ -124,6 +126,7 @@
         file: {},
         link:null,
         verify:null,
+        userProfile: null,
         lblResult:null,
         isSuccessType:null,
         isSuccessMsg:null,
@@ -134,6 +137,29 @@
         isPhoneType: null,
         isPhoneMsg:null
       }
+    },
+    mounted() {
+      const liff = this.$liff
+      liff.init({
+        liffId: line.liffID
+      }).then(() => {
+        console.log('LIFF initialize finished')
+        if (liff.isLoggedIn()) {
+          liff.getProfile()
+          .then(profile => {
+            // console.log(JSON.stringify(profile))
+            this.userProfile = profile.userId
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+        } else {
+          console.log('LIFF is not logged in')
+          liff.login()
+        }
+      }).catch((err) => {
+        console.error('Error initialize LIFF: ', err)
+      });
     },
     watch:{
       email(){
@@ -182,9 +208,17 @@
         const addUser = firestore.collection("userRegister");
         addUser.add(obj)
           .then(()=>{
-            console.log("ลงทะเบียนสำเร็จ")
-            this.isSuccessType = "is-success"
-            this.isSuccessMsg = "ลงทะเบียนสำเร็จ"
+            Swal.fire({
+              title: 'ลงทะเบียนสำเร็จ',
+              icon: 'success'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                liff.closeWindow()
+              }
+            })
+            // console.log("ลงทะเบียนสำเร็จ")
+            // this.isSuccessType = "is-success"
+            // this.isSuccessMsg = "ลงทะเบียนสำเร็จ"
           })
           .catch(err => console.log(err));
       },
@@ -213,10 +247,11 @@
                 usertype:this.usertype,
                 stuid:this.stuid,
                 phone:this.phone,
-                userid:null,
+                userid:this.userProfile,
                 link:photoURL,
                 verify:"true",
                 approve:"false",
+                approver:null,
                 comment:null
               };
               this.addUserRegister(obj);

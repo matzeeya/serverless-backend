@@ -60,20 +60,20 @@ export default {
           icon: 'question',
           showCancelButton: true,
           confirmButtonColor: '#1ABC9C'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          let id = e.target.value
-          userRegister.doc(id)
-          .update({approve: "1"})
-          .then(res => {
-            console.log(res)
-            location.reload(true)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        }
-      })
+        }).then((result) => {
+          if (result.isConfirmed) {
+            let id = e.target.value
+            userRegister.doc(id)
+            .update({approve: "1"})
+            .then(res => {
+              console.log(res)
+              location.reload(true)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+          }
+        })
       },
       reject: function(e) {
         Swal.fire({
@@ -82,20 +82,19 @@ export default {
           icon: 'question',
           showCancelButton: true,
           confirmButtonColor: '#E74C3C'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          let id = e.target.value
-          userRegister.doc(id)
-          .update({approve: "2"})
-          .then(res => {
-            console.log(res)
-            location.reload(true)
-          })
-          .catch(err => {
-            console.log(err);
-          })
-        }
-      })
+        }).then((result) => {
+          if (result.isConfirmed) {
+            let id = e.target.value
+            userRegister.doc(id)
+            .update({approve: "2"})
+            .then(() => {
+              location.reload(true)
+            })
+            .catch(err => {
+              console.log(err);
+            })
+          }
+        })
       }
     // submit(){
     //   axios.post('/your-url', {name: this.name})

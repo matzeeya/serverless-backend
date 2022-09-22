@@ -3,8 +3,8 @@ import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
-import Profile from './views/Default/UserProfile.vue'
-import SearchItem from './views/User/SearchItem.vue'
+import SearchItem from './views/Default/SearchItem.vue'
+import Profile from './views/User/UserProfile.vue'
 import Verify from './views/Admin/UserVerify.vue'
 
 Vue.use(VueRouter)
