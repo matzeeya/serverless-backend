@@ -3,6 +3,7 @@ const functions = require('firebase-functions');
 const express = require('express');
 const cors = require('cors');
 const employeeRoutes = require('./routes/employee_route');
+const lineRoutes = require('./routes/line_route');
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.get('/welcome', (req, res) =>
 );
 
 app.use('/v1', employeeRoutes.routes);
+
+app.use('/line', lineRoutes.routes);
 
 const api = functions.https.onRequest((request, response) => {
   //  response.send('Hello from Firebase!');

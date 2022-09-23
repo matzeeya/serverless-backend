@@ -3,6 +3,7 @@ const cors = require('cors');
 const winston = require('winston');
 const config = require('./config');
 const employeeRoutes = require('./routes/employee_route');
+const lineRoutes = require('./routes/line_route');
 require('./logging')();
 
 const app = express();
@@ -19,6 +20,7 @@ app.get('/api', (req, res) =>
 );
 
 app.use('/api/v1', employeeRoutes.routes);
+app.use('/api/line', lineRoutes.routes);
 
 app.listen(config.port, (err) => {
   if (err) {

@@ -9,3 +9,5 @@ const config = {
   LIFF_ID: 'xxx' // LIFF
 };
 /* eslint-disable no-unused-vars */
+
+module.exports = config;
