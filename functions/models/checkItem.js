@@ -11,7 +11,7 @@ const LINE_HEADER = {
   Authorization: `Bearer ${config.accessToken}`
 };
 
-function chkInventory(req, res, doc) { 
+function checkItem(req, res, doc) { 
   const event = req.body.events[0];
   const encodeAsset = btoa(doc.item_code);
   reply(event.replyToken, { 
@@ -109,7 +109,7 @@ function getdata(req, res, id){
   axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + id)
     .then(doc => {
       let item = doc.data[0];
-      chkInventory(req, res, item);
+      checkItem(req, res, item);
     })
     .catch(err => {
       console.log(err);

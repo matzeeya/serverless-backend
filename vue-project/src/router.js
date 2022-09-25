@@ -5,6 +5,11 @@ import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
 import SearchItem from './views/Default/SearchItem.vue'
 import Profile from './views/User/UserProfile.vue'
+import BorrowItem from './views/User/BorrowItem.vue'
+import ReturnItem from './views/User/ReturnItem.vue'
+import CheckItem from './views/Staff/CheckItem.vue'
+import RepairItem from './views/Staff/RepairItem.vue'
+import SellItem from './views/Staff/SellItem.vue'
 import Verify from './views/Admin/UserVerify.vue'
 
 Vue.use(VueRouter)
@@ -28,6 +33,31 @@ const routes = [{
   path: '/profile',
   name: 'Profile',
   component: Profile
+},
+{
+  path: '/borrowItem',
+  name: 'BorrowItem',
+  component: BorrowItem
+},
+{
+  path: '/returnItem',
+  name: 'ReturnItem',
+  component: ReturnItem
+},
+{
+  path: '/checkItem',
+  name: 'CheckItem',
+  component: CheckItem
+},
+{
+  path: '/repairItem',
+  name: 'RepairItem',
+  component: RepairItem
+},
+{
+  path: '/sellItem',
+  name: 'SellItem',
+  component: SellItem
 },
 {
   path: '/verify',

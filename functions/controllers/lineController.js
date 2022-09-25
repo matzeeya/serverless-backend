@@ -4,11 +4,11 @@ const config = require('../config');
 
 
 const check = require('../models/checkItem');
-// const search = require('../models/searchItem');
-// const borrow = require('../models/borrowItem');
-// const back = require('../models/returnItem');
-// const repair = require('../models/repairItem');
-// const sell = require('../models/sellItem');
+const search = require('../models/searchItem');
+const borrow = require('../models/borrowItem');
+const back = require('../models/returnItem');
+const repair = require('../models/repairItem');
+const sell = require('../models/sellItem');
 
 const LINE_MESSAGING_API = "https://api.line.me/v2/bot";
 const LINE_HEADER = {
@@ -24,16 +24,16 @@ const linebot = async(req, res) => {
       var msg = event.message.text.split(": ");
       if(msg[0] === "หมายเลขครุภัณฑ์" && msg[1] !== "null"){
         check.getdata(req, res, msg[1]);
-      // }else if(msg[0] === "ข้อมูลครุภัณฑ์" && msg[1] !== "null"){
-      //   search.getdata(req, res, msg[1]);
-      // }else if(msg[0] === "ยืมครุภัณฑ์" && msg[1] !== "null"){
-      //   borrow.getdata(req, res, msg[1]);
-      // }else if(msg[0] === "คืนครุภัณฑ์" && msg[1] !== "null"){
-      //   back.getdata(req, res, msg[1]);
-      // }else if(msg[0] === "แจ้งซ่อมครุภัณฑ์" && msg[1] !== "null"){
-      //   repair.getdata(req, res, msg[1]);
-      // }else if(msg[0] === "จำหน่ายครุภัณฑ์" && msg[1] !== "null"){
-      //   sell.getdata(req, res, msg[1]);
+      }else if(msg[0] === "ข้อมูลครุภัณฑ์" && msg[1] !== "null"){
+        search.getdata(req, res, msg[1]);
+      }else if(msg[0] === "ยืมครุภัณฑ์" && msg[1] !== "null"){
+        borrow.getdata(req, res, msg[1]);
+      }else if(msg[0] === "คืนครุภัณฑ์" && msg[1] !== "null"){
+        back.getdata(req, res, msg[1]);
+      }else if(msg[0] === "แจ้งซ่อมครุภัณฑ์" && msg[1] !== "null"){
+        repair.getdata(req, res, msg[1]);
+      }else if(msg[0] === "จำหน่ายครุภัณฑ์" && msg[1] !== "null"){
+        sell.getdata(req, res, msg[1]);
       }else{
         postToDialogflow(req);
       }
