@@ -6,7 +6,7 @@ const config = {
   bitly: 'xxx', // bitly token
   dialogflow: 'https://dialogflow.cloud.google.com/v1/integrations/line/webhook/xxx', // dialogflow webhook
   LIFF_ID: 'xxx', // LIFF
-  LIFF_URL: 'https://liff.line.me/' + LIFF_ID
+  LIFF_URL: 'https://liff.line.me/xxx',
 };
 /* eslint-disable no-unused-vars */
 

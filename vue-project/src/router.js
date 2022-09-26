@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
+import ViewData from './views/ViewData.vue'
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
 import SearchItem from './views/Default/SearchItem.vue'
@@ -18,6 +19,11 @@ const routes = [{
   path: '/',
   name: 'Home',
   component: Home
+},
+{
+  path: '/viewdata/:code',
+  name: 'ViewData',
+  component: ViewData
 },
 {
   path: '/register',
