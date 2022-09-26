@@ -72,7 +72,7 @@ function searchInventory(req, res, doc) {
               "action": {
                 "type": "uri",
                 "label": "ดูรายละเอียดเพิ่มเติม...",
-                "uri": `${config.LIFF_URL}/itemDetail`
+                "uri": `${config.LIFF_URL}/viewdata`
               },
               "style": "primary"
             }

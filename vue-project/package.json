@@ -8,9 +8,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "buefy": "^0.9.20",
-    "cors": "^2.8.5",
     "core-js": "^3.6.5",
-    "express": "^4.18.1",
     "firebase": "^9.5.0",
     "sweetalert2": "^11.4.33",
     "vue": "^2.6.11",
