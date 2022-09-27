@@ -13,6 +13,7 @@ const LINE_HEADER = {
 
 function searchInventory(req, res, doc) { 
   const event = req.body.events[0];
+  // const room = doc.room.split("ห้อง ")
   reply(event.replyToken, { 
       type: 'flex',
       altText: 'ไม่รองรับการแสดงผลบนอุปกรณ์นี้',
@@ -72,7 +73,7 @@ function searchInventory(req, res, doc) {
               "action": {
                 "type": "uri",
                 "label": "ดูรายละเอียดเพิ่มเติม...",
-                "uri": `${config.LIFF_URL}/viewdata`
+                "uri": `${config.LIFF_URL}/viewdata/${doc.item_code}`
               },
               "style": "primary"
             }
