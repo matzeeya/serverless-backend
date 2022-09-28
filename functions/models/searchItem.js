@@ -12,8 +12,15 @@ const LINE_HEADER = {
 };
 
 function searchInventory(req, res, doc) { 
+  let room = "";
   const event = req.body.events[0];
-  // const room = doc.room.split("ห้อง ")
+  const search = doc.room.search("ห้อง");
+  if(search > 0){
+    const splitRoom = doc.room.split("ห้อง ");
+    room = splitRoom[1];
+  }else{
+    room = doc.room;
+  }
   reply(event.replyToken, { 
       type: 'flex',
       altText: 'ไม่รองรับการแสดงผลบนอุปกรณ์นี้',
@@ -60,7 +67,7 @@ function searchInventory(req, res, doc) {
             },
             {
               "type": "text",
-              "text": "สถานที่จัดเก็บ: " + doc.room
+              "text": "สถานที่จัดเก็บ: " + room
             }
           ]
         },
