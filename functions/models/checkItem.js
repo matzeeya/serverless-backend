@@ -82,9 +82,18 @@ function checkItem(req, res, doc) {
               "action": {
                 "type": "uri",
                 "label": "แก้ไข",
-                "uri": `${config.LIFF_URL}/editItem?code=${encodeAsset}`
+                "uri": `${config.LIFF_URL}/movement?code=${encodeAsset}`
               },
               "style": "secondary"
+            },
+            {
+              "type": "button",
+              "action": {
+                "type": "uri",
+                "label": "แนบรูป",
+                "uri": 'https://line.me/R/nv/camera/'
+              },
+              "style": "info"
             }
           ]
         }
@@ -92,7 +101,7 @@ function checkItem(req, res, doc) {
   });
   return res.end();
 }
-  
+
 const reply = (replyToken, payload) => {
   axios({
     method: "post",
