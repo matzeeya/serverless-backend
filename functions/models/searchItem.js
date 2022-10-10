@@ -104,40 +104,38 @@ const reply = (replyToken, payload) => {
 };
 
 function getdata(req, res, id){
-  // let code;
-  // const decode = id.search("eng");
-  // if(decode >= 0){
-  //   code = decodeItem(id);
-  //   console.log("decode "+code);
-  // }else{
-  //   code = id;
-  // }
-  let encode = btoa(id);
-  console.log("encode " + encode);
-  let code = decodeItem(encode);
-  console.log("decode " + code);
-  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + id)
+  let event = req.body.events[0];
+  let code;
+  const decode = id.search("eng");
+  if(decode >= 0){
+    code = decodeItem(id);
+    console.log("decode "+code);
+  }else{
+    code = id;
+  }
+  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
     .then(doc => {
       let item = doc.data[0];
       searchInventory(req, res, item);
     })
     .catch(err => {
+      reply(event.replyToken, { type: "text", text: "ไม่พบข้อมูลครุภัณฑ์"});
       console.log(err);
     })
 }
 
 function decodeItem(code){
-
-  // code = code.replace('eng','วศ.');
-  // code = code.replace('m','ว.');
-  // code = code.replace('com','คต. ');
-  // code = code.replace('ee','ฟฟ. ');
-  // code = code.replace('office','สนง. ');
-  // code = code.replace('edu','กศ. ');
-  // code = code.replaceAll('-','');
-  // let str = code.split(' ');
-  // let year = str[1].substring(str[1].length - 4);
-  return atob(code);
+  code = code.replace('eng','วศ.');
+  code = code.replace('m','ว.');
+  code = code.replace('com','คต. ');
+  code = code.replace('ee','ฟฟ. ');
+  code = code.replace('office','สนง. ');
+  code = code.replace('edu','กศ. ');
+  code = code.replaceAll('-','');
+  let str = code.split(' ');
+  let year = str[1].substring(str[1].length - 4);
+  code = code.replace(year,'/'+year);
+  return code;
 }
 
 module.exports={ getdata };
