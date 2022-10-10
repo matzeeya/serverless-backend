@@ -15,7 +15,7 @@ function searchInventory(req, res, doc) {
   let room = "";
   const event = req.body.events[0];
   const search = doc.room.search("ห้อง");
-  if(search > 0){
+  if(search >= 0){
     const splitRoom = doc.room.split("ห้อง ");
     room = splitRoom[1];
   }else{
@@ -104,6 +104,14 @@ const reply = (replyToken, payload) => {
 };
 
 function getdata(req, res, id){
+  let code;
+  const decode = id.search("eng");
+  if(decode >= 0){
+    code = decodeItem(id);
+    console.log(code);
+  }else{
+    code = id;
+  }
   axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + id)
     .then(doc => {
       let item = doc.data[0];
@@ -112,6 +120,13 @@ function getdata(req, res, id){
     .catch(err => {
       console.log(err);
     })
+}
+
+function decodeItem(code){
+  return code.replace(
+    array('eng','m','com','ee','office','edu'),
+    array('วศ','ว','คต','ฟฟ','สนง','กศ')
+  )
 }
 
 module.exports={ getdata };

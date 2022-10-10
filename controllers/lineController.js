@@ -36,6 +36,8 @@ const linebot = async(req, res) => {
       }else{
         postToDialogflow(req);
       }
+    }else{
+      reply(event.replyToken, { type: "text", text: "สวัสดีค่ะ"});
     }
   }
   return res.status(200).send('done');
