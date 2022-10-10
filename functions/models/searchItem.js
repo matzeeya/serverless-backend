@@ -104,14 +104,18 @@ const reply = (replyToken, payload) => {
 };
 
 function getdata(req, res, id){
-  let code;
-  const decode = id.search("eng");
-  if(decode >= 0){
-    code = decodeItem(id);
-    console.log(code);
-  }else{
-    code = id;
-  }
+  // let code;
+  // const decode = id.search("eng");
+  // if(decode >= 0){
+  //   code = decodeItem(id);
+  //   console.log("decode "+code);
+  // }else{
+  //   code = id;
+  // }
+  let encode = btoa(id);
+  console.log("encode " + encode);
+  let code = decodeItem(encode);
+  console.log("decode " + code);
   axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + id)
     .then(doc => {
       let item = doc.data[0];
@@ -123,10 +127,17 @@ function getdata(req, res, id){
 }
 
 function decodeItem(code){
-  return code.replace(
-    array('eng','m','com','ee','office','edu'),
-    array('วศ','ว','คต','ฟฟ','สนง','กศ')
-  )
+
+  // code = code.replace('eng','วศ.');
+  // code = code.replace('m','ว.');
+  // code = code.replace('com','คต. ');
+  // code = code.replace('ee','ฟฟ. ');
+  // code = code.replace('office','สนง. ');
+  // code = code.replace('edu','กศ. ');
+  // code = code.replaceAll('-','');
+  // let str = code.split(' ');
+  // let year = str[1].substring(str[1].length - 4);
+  return atob(code);
 }
 
 module.exports={ getdata };
