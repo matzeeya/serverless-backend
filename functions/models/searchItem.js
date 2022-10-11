@@ -125,15 +125,15 @@ function getdata(req, res, id){
 }
 
 function decodeItem(code){
-  code = code.replace('eng','วศ.');
-  code = code.replace('m','ว.');
-  code = code.replace('com','คต. ');
-  code = code.replace('ee','ฟฟ. ');
-  code = code.replace('office','สนง. ');
-  code = code.replace('edu','กศ. ');
+  let arr1= ['eng','m','com','ee','off','edu'];
+  let arr2= ['วศ.','ว.','คต. ','ฟฟ. ','สนง. ','กศ. '];
+
+  for(let i=0; i<arr1.length; i++){
+    code = code.replace(arr1[i],arr2[i]);
+  }
   code = code.replaceAll('-','');
   let str = code.split(' ');
-  let year = str[1].substring(str[1].length - 4);
+  let year = str[1].substring(str[1].length - 4); //ตัดปีงบประมาณ
   code = code.replace(year,'/'+year);
   return code;
 }
