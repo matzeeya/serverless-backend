@@ -31,7 +31,6 @@
       <p class="card-text"><b>วันที่รับเข้า:</b> {{ item.procurement[0].received_date }}</p>
       <p class="card-text"><b>ผู้ขาย:</b> {{ item.procurement[0].vender }}</p>
       <p class="card-text"><b>เลขที่ใบส่งของ:</b> {{ item.procurement[0].doc_invoice }}</p>
-      <button type="button" class="btn btn-info" @click="closed()">ปิดหน้าต่าง</button>
     </div>
   </div>
 </template>
@@ -77,11 +76,6 @@
       .catch((err) => {
         console.log(err);
       });
-    },
-    methods : {
-      closed() {
-       liff.closeWindow();
-      }
     }
   }
 </script>
