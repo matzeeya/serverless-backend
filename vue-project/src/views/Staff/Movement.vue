@@ -14,8 +14,13 @@
       <p class="card-text"><b>สถานะ:</b> {{ item.status }}</p>
       <p class="card-text"><b>คุณลักษณะ:</b> {{ item.appearance }}</p>
       <p class="card-text"><b>ผู้รับผิดชอบ:</b> {{ item.holder }}</p>
-      <ListRoom :getAllRoom="getRoom"/>
-      <button type="button" class="btn btn-info" @click="Movement()">แก้ไขรายการ</button>
+      <form @submit.prevent="submitHandler">
+        <ListRoom :getAllRoom="getRoom"/>
+        <div class="buttons">
+          <button class="button is-info"
+            type="submit">แก้ไขรายการ</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -45,11 +50,32 @@
       });
     },
     methods : {
-      Movement() {
-        console.log("movement");
-      },
       getRoom(room){
         this.room_at = room
+      },
+      addMovement(obj){
+        const movement = firestore.collection("movement");
+        movement.add(obj)
+          .then(()=>{
+            Swal.fire({
+              title: 'แก้ไขข้อมูลสำเร็จ',
+              icon: 'success'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                liff.closeWindow()
+              }
+            })
+          })
+          .catch(err => console.log(err));
+      },
+      async submitHandler(){
+        const obj = {
+          room_old:this.room_db,
+          room_new:this.room_at,
+          item_code:this.item_code,
+          created_at:Date.now()
+        };
+        this.addMovement(obj);
       }
     }
   }
