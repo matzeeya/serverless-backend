@@ -4,7 +4,7 @@
       <select id="allRoom"
         name="allRoom"
         v-model="allRoom"
-        @change="getRoom(allRoom)"
+        @change="getAllRoom(allRoom)"
         style="width:280px">
           <option v-for="allRoom in rooms" 
             v-bind:key="allRoom">

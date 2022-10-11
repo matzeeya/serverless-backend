@@ -1,40 +1,17 @@
 <template>
-  <div class='card'>
-    <img :src='photo' class='card-img-top'>
-    <div class='card-body'>
-      <p class='card-text'><b>หมายเลขครุภัณฑ์:</b> {{ item.item_code }}</p>
-      <p class='card-text'><b>ชื่อรายการ:</b> {{ item.name }}</p>
-      <p class='card-text'><b>ประเภท:</b> {{ item.item_type }}</p>
-      <p class='card-text'><b>ชนิด:</b> {{ item.kind }}</p>
-      <p class='card-text'><b>ยี่ห้อ:</b> {{ item.brand }}</p>
-      <p class='card-text'><b>โมเดล:</b> {{ item.model }}</p>
-      <p class='card-text'><b>Serial:</b> {{ item.serial }}</p>
-      <p class='card-text'><b>องค์กร:</b> {{ item.organization }}</p>
-      <p class='card-text'><b>สถานที่เก็บ:</b> {{ item.room }}</p>
-      <p class='card-text'><b>สถานะ:</b> {{ item.status }}</p>
-      <p class='card-text'><b>คุณลักษณะ:</b> {{ item.appearance }}</p>
-      <p class='card-text'><b>ผู้รับผิดชอบ:</b> {{ item.holder }}</p>
-      <form @submit.prevent='submitHandler'>
-        <ListRoom :getAllRoom='getRoom'/>
-        <button class='button is-info' type='submit'>แก้ไขรายการ</button>
-      </form>
-    </div>
+  <div>
+    <p>กำลังบันทึกข้อมูล กรุณารอสักครู่...</p>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import Swal from 'sweetalert2';
-
   import firestore from '../../../../firebase-config/vue/firebase';
-  import ListRoom from '../../components/ListRoom.vue';
 
   const line = require('../../../../line-config/config');
-
+  
   export default {
-    components: {
-      ListRoom
-    },
     data() {
       return {
         photo: 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
@@ -74,40 +51,7 @@
       .then((doc) => {
         this.item = doc.data[0];
         this.room_db = doc.data[0].room;
-        this.item_code = doc.data[0].item_code;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    },
-    methods : {
-      getRoom(room){
-        this.room_at = room
-      },
-      addItem(data){
-        const item = firestore.collection('items');
-        item.add(data)
-          .then(()=>{
-            console.log('บันทึกข้อมูลสำเร็จ');
-          })
-          .catch(err => console.log(err));
-      },
-      addMovement(obj){
-        const movement = firestore.collection('movement');
-        movement.add(obj)
-          .then(()=>{
-            Swal.fire({
-              title: 'แก้ไขข้อมูลสำเร็จ',
-              icon: 'success'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                liff.closeWindow()
-              }
-            })
-          })
-          .catch(err => console.log(err));
-      },
-      async submitHandler(){
+
         const search = this.room_db.search('ห้อง');
         if(search >= 0){
           const splitRoom = this.room_db.split('ห้อง ');
@@ -115,7 +59,7 @@
         }else{
           this.room_old = this.room_db;
         }
-        //Add All data to table items
+
         const data = {
           item_code: this.item.item_code,
           item_type: this.item.item_type,
@@ -129,7 +73,7 @@
           price: this.item.price,
           unit: this.item.unit,
           organization: this.item.organization,
-          room: this.room_at,
+          room: this.room_old,
           room_db: this.item.room,
           room_old: this.room_old,
           procurement:{
@@ -152,16 +96,26 @@
           created_at: new Date().toLocaleString()
         };
         this.addItem(data);
-        
-        //Add data to table movement
-        const obj = {
-          room_old: this.room_old,
-          room_new: this.room_at,
-          item_code: this.item_code,
-          update_by: this.userProfile,
-          created_at: new Date().toLocaleString()
-        };
-        this.addMovement(obj);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    },
+    methods : {
+      addItem(data){
+        const item = firestore.collection('items');
+        item.add(data)
+          .then(()=>{
+            Swal.fire({
+              title: 'บันทึกข้อมูลสำเร็จ',
+              icon: 'success'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                liff.closeWindow()
+              }
+            })
+          })
+          .catch(err => console.log(err));
       }
     }
   }

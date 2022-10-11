@@ -9,7 +9,7 @@
       <p class="card-text"><b>ยี่ห้อ:</b> {{ item.brand }}</p>
       <p class="card-text"><b>โมเดล:</b> {{ item.model }}</p>
       <p class="card-text"><b>Serial:</b> {{ item.serial }}</p>
-      <p class="card-text"><b>รับประกัน:</b> {{ item.warranty }} ปี</p>
+      <p class="card-text"><b>รับประกัน:</b> {{ item.warranty }}</p>
       <p class="card-text"><b>ระยะเวลาใช้งาน:</b> {{ item.length }}</p>
       <p class="card-text"><b>ราคา:</b> {{ item.price }} บาท</p>
       <p class="card-text"><b>จำนวน:</b> {{ item.unit }}</p>

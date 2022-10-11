@@ -11,6 +11,7 @@ import ReturnItem from './views/User/ReturnItem.vue'
 import CheckItem from './views/Staff/CheckItem.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
+import AddItem from './views/Staff/AddItem.vue'
 import Movement from './views/Staff/Movement.vue'
 import Verify from './views/Admin/UserVerify.vue'
 
@@ -65,6 +66,11 @@ const routes = [{
   path: '/sellItem',
   name: 'SellItem',
   component: SellItem
+},
+{
+  path: '/addItem/:code',
+  name: 'AddItem',
+  component: AddItem
 },
 {
   path: '/movement/:code',
