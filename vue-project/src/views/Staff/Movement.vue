@@ -116,42 +116,12 @@
           this.room_old = this.room_db;
         }
         //Add All data to table items
-        const data = {
-          item_code: this.item.item_code,
-          item_type: this.item.item_type,
-          length: this.item.length,
-          kind: this.item.kind,
-          name: this.item.name,
-          brand: this.item.brand,
-          model: this.item.model,
-          serial: this.item.serial,
-          warranty: this.item.warranty,
-          price: this.item.price,
-          unit: this.item.unit,
-          organization: this.item.organization,
-          room: this.room_at,
-          room_db: this.item.room,
-          room_old: this.room_old,
-          procurement:{
-            method: this.item.procurement[0].method,
-            source: this.item.procurement[0].source,
-            year: this.item.procurement[0].year,
-            docno_withdraw: this.item.procurement[0].docno_withdraw,
-            owner_withdraw: this.item.procurement[0].owner_withdraw,
-            contact_no: this.item.procurement[0].contact_no,
-            contact_date: this.item.procurement[0].contact_date,
-            received_date: this.item.procurement[0].received_date,
-            vender: this.item.procurement[0].vender,
-            doc_invoice: this.item.procurement[0].doc_invoice
-          },
-          status: this.item.status,
-          appearance: this.item.appearance,
-          holder: this.item.holder,
-          reference: this.item.reference,
-          create_by: this.userProfile,
-          created_at: new Date().toLocaleString()
-        };
-        this.addItem(data);
+        this.item.room = this.room_at; //current room
+        this.item.room_db = this.item.room; // room in inventory or db
+        this.item.room_old = this.room_old; //old room
+        this.item.create_by = this.userProfile;
+        this.item.created_at = new Date().toLocaleString();
+        this.addItem(this.item);
         
         //Add data to table movement
         const obj = {

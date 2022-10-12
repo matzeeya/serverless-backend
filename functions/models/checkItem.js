@@ -68,6 +68,16 @@ function checkItem(req, res, doc) {
             {
               "type": "text",
               "text": "สถานที่จัดเก็บ: " + room
+            },
+            {
+              "type": "button",
+              "action": {
+                "type": "uri",
+                "label": "แนบรูป",
+                "uri": 'https://line.me/R/nv/camera/'
+              },
+              "color": "#89D1F3FF",
+              "style": "primary"
             }
           ]
         },
@@ -91,16 +101,8 @@ function checkItem(req, res, doc) {
                 "label": "แก้ไข",
                 "uri": `${config.LIFF_URL}/movement/${doc.item_code}`
               },
-              "style": "secondary"
-            },
-            {
-              "type": "button",
-              "action": {
-                "type": "uri",
-                "label": "แนบรูป",
-                "uri": 'https://line.me/R/nv/camera/'
-              },
-              "style": "info"
+              "color": "#F1AE6FFF",
+              "style": "primary"
             }
           ]
         }
@@ -133,7 +135,9 @@ function getdata(req, res, id){
   }
   axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
     .then(doc => {
+      // console.log("code " + code);
       let item = doc.data[0];
+      // console.log("item ",item)
       checkItem(req, res, item);
     })
     .catch(err => {
