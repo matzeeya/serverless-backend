@@ -22,20 +22,24 @@ const linebot = async(req, res) => {
   if(req.method === "POST"){
     if(event.message.type === "text"){
       var msg = event.message.text.split(": ");
-      if(msg[0] === "หมายเลขครุภัณฑ์" && msg[1] !== "null"){
-        check.getdata(req, res, msg[1]);
-      }else if(msg[0] === "ข้อมูลครุภัณฑ์" && msg[1] !== "null"){
-        search.getdata(req, res, msg[1]);
-      }else if(msg[0] === "ยืมครุภัณฑ์" && msg[1] !== "null"){
-        borrow.getdata(req, res, msg[1]);
-      }else if(msg[0] === "คืนครุภัณฑ์" && msg[1] !== "null"){
-        back.getdata(req, res, msg[1]);
-      }else if(msg[0] === "แจ้งซ่อมครุภัณฑ์" && msg[1] !== "null"){
-        repair.getdata(req, res, msg[1]);
-      }else if(msg[0] === "จำหน่ายครุภัณฑ์" && msg[1] !== "null"){
-        sell.getdata(req, res, msg[1]);
+      if(msg[1] === "null"){
+        if(msg[0] === "หมายเลขครุภัณฑ์"){
+          check.getdata(req, res, msg[1]);
+        }else if(msg[0] === "ข้อมูลครุภัณฑ์"){
+          search.getdata(req, res, msg[1]);
+        }else if(msg[0] === "ยืมครุภัณฑ์"){
+          borrow.getdata(req, res, msg[1]);
+        }else if(msg[0] === "คืนครุภัณฑ์"){
+          back.getdata(req, res, msg[1]);
+        }else if(msg[0] === "แจ้งซ่อมครุภัณฑ์"){
+          repair.getdata(req, res, msg[1]);
+        }else if(msg[0] === "จำหน่ายครุภัณฑ์"){
+          sell.getdata(req, res, msg[1]);
+        }else{
+          postToDialogflow(req);
+        }
       }else{
-        postToDialogflow(req);
+        reply(event.replyToken, { type: "text", text: "กรุณาสแกนใหม่อีกครั้งค่ะ"});
       }
     }else{
       reply(event.replyToken, { type: "text", text: "สวัสดีค่ะ"});

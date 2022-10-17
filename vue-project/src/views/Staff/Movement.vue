@@ -15,7 +15,7 @@
       <p class='card-text'><b>คุณลักษณะ:</b> {{ item.appearance }}</p>
       <p class='card-text'><b>ผู้รับผิดชอบ:</b> {{ item.holder }}</p>
       <form @submit.prevent='submitHandler'>
-        <ListRoom :getAllRoom='getRoom'/>
+        <p class='card-text'><b>สถานที่เก็บปัจจุบัน:</b> <ListRoom :getAllRoom='getRoom'/></p>
         <button class='button is-info' type='submit'>แก้ไขรายการ</button>
       </form>
     </div>

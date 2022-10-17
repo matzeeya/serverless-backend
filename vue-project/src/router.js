@@ -2,6 +2,13 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import ViewData from './views/ViewData.vue'
+
+import AddList from './views/AddList.vue'
+import BorrowList from './views/BorrowList.vue'
+import ReturnList from './views/ReturnList.vue'
+import RepairList from './views/RepairList.vue'
+import SellList from './views/SellList.vue'
+
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
 import SearchItem from './views/Default/SearchItem.vue'
@@ -26,6 +33,31 @@ const routes = [{
   path: '/viewdata/:code',
   name: 'ViewData',
   component: ViewData
+},
+{
+  path: '/addList/:code',
+  name: 'AddList',
+  component: AddList
+},
+{
+  path: '/borrowList',
+  name: 'BorrowList',
+  component: BorrowList
+},
+{
+  path: '/returnList',
+  name: 'ReturnList',
+  component: ReturnList
+},
+{
+  path: '/repairList',
+  name: 'RepairList',
+  component: RepairList
+},
+{
+  path: '/sellList',
+  name: 'SellList',
+  component: SellList
 },
 {
   path: '/register',

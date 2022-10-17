@@ -60,7 +60,7 @@
           this.room_old = this.room_db;
         }
         //Add All data to table items
-        console.log("user profile "+this.userProfile);
+        // console.log("user profile "+this.userProfile);
         this.item.room = this.room_old;
         this.item.room_db = this.room_db;
         this.item.room_old = this.room_old;

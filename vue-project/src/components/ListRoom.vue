@@ -1,5 +1,5 @@
 <template>
-  <b-field label="สถานที่เก็บปัจจุบัน: ">
+  <!-- <b-field label="สถานที่เก็บปัจจุบัน: "> -->
     <div class="select">
       <select id="allRoom"
         name="allRoom"
@@ -12,7 +12,7 @@
             </option>
       </select>
     </div>
-  </b-field>
+  <!-- </b-field> -->
 </template>
 <script>
 import firestore from "../../../firebase-config/vue/firebase"
