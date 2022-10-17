@@ -34,6 +34,7 @@
           liff.getProfile()
           .then(profile => {
             this.userProfile = profile.userId;
+            this.pushItem();
           })
           .catch((err) => {
             console.error(err)
@@ -51,22 +52,6 @@
       .then((doc) => {
         this.item = doc.data[0];
         this.room_db = doc.data[0].room;
-
-        const search = this.room_db.search('ห้อง');
-        if(search >= 0){
-          const splitRoom = this.room_db.split('ห้อง ');
-          this.room_old = splitRoom[1];
-        }else{
-          this.room_old = this.room_db;
-        }
-        //Add All data to table items
-        // console.log("user profile "+this.userProfile);
-        this.item.room = this.room_old;
-        this.item.room_db = this.room_db;
-        this.item.room_old = this.room_old;
-        this.item.create_by = this.userProfile;
-        this.item.created_at = new Date().toLocaleString();
-        this.addItem(this.item);
       })
       .catch((err) => {
         console.log(err);
@@ -88,7 +73,22 @@
           })
           .catch(err => console.log(err));
       },
-
+      pushItem(){
+        const search = this.room_db.search('ห้อง');
+        if(search >= 0){
+          const splitRoom = this.room_db.split('ห้อง ');
+          this.room_old = splitRoom[1];
+        }else{
+          this.room_old = this.room_db;
+        }
+        //Add All data to table items
+        this.item.room = this.room_old;
+        this.item.room_db = this.room_db;
+        this.item.room_old = this.room_old;
+        this.item.create_by = this.userProfile;
+        this.item.created_at = new Date().toLocaleString();
+        this.addItem(this.item);
+      }
     }
   }
 </script>
