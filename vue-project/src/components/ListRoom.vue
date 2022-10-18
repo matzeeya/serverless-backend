@@ -36,6 +36,7 @@ export default {
         }
       })
     })
+    console.log('room ',this.rooms);
   }
 }
 </script>

@@ -123,7 +123,7 @@
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if(key.search('item:') >= 0){
-            this.items.push(localStorage.removeItem(key));
+            localStorage.removeItem(key);
           }
         }
         liff.closeWindow();
@@ -138,7 +138,7 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                localStorage.clear();
+                this.cancelHandler();
                 liff.closeWindow();
               }
             })
@@ -183,7 +183,7 @@
         };
 
         for (let i = 0; i < this.items.length; i++) {
-          obj[i] = {'item_code':this.items[i],'room':this.room_at[i]}
+          obj[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
         }
 
         this.addBorrow(obj);
