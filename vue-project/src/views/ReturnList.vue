@@ -16,14 +16,14 @@
             <th scope='row'>{{ index + 1 }}</th>
             <td>{{ item }}</td>
             <td><ListRoom :getAllRoom='getRoom'/></td>
-            <td><ListAppearance :getAppearances='appearance'/></td>
+            <td><ListAppearance :getAppearances='getState'/></td>
             <td>
               <input 
                 type='checkbox' 
                 :id='key'
                 :value='item'
                 v-model='delItem'
-                @change='del'>
+                @change='deleteItem'>
             </td>
           </tr>
           <tr>
@@ -31,8 +31,8 @@
               <b-field label='หมายเหตุ'>
                 <b-input 
                   type='textarea'
-                  v-model='reason' 
-                  placeholder='กรุณาระบุเหตุผล'>
+                  v-model='note' 
+                  placeholder='หมายเหตุ...'>
                 </b-input>
               </b-field>
             </td>
@@ -41,7 +41,7 @@
         <tfoot>
           <tr>
             <td colspan='2'>
-              <button class='button is-success' type='submit'>ยืนยันรายการยืม</button>
+              <button class='button is-success' type='submit'>ยืนยันรายการคืน</button>
             </td>
             <td colspan='2'>
               <button class='button is-danger' @click='cancelHandler'>ยกเลิก</button>
@@ -71,11 +71,11 @@
         photo: 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
         code: this.$route.params.code,
         userProfile: null,
-        itemStatus: null,
+        itemStatus: [],
         items: [],
         delItem: [],
         room_at: [],
-        reason: null
+        note: null
       }
     },
     mounted(){
@@ -107,19 +107,21 @@
           this.items.push(localStorage.getItem(key));
         }
       }
-      // console.log(this.items);
     },
     methods : {
       getRoom(room){
         this.room_at.push(room);
       },
-      appearance(state){
+      getState(state){
         this.itemStatus.push(state);
       },
-      del(){
+      deleteItem(){
         Swal.fire({
-          title: 'ต้องการลบรายการ '+ this.delItem +' ใช่หรือไม่?',
-          icon: 'success'
+          title: 'เลขครุภัณฑ์: '+ this.delItem,
+          text: 'ต้องการลบรายการใช่หรือไม่?',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          icon: 'question'
         }).then((result) => {
           if (result.isConfirmed) {
             let rm = 'item:' + this.delItem;
@@ -137,10 +139,39 @@
         }
         liff.closeWindow();
       },
-      addBorrow(data){
-        this.queryDoc();
-        const borrow = firestore.collection('borrow');
-        borrow.add(data)
+      queryDoc(data){
+        for (let i = 0; i < this.items.length; i++) {
+          const docRef = firestore.collection('items');
+          const query = docRef
+            .where('item_code','==',this.items[i]);
+          query
+          .get()
+          .then(snapshot =>{
+            snapshot.forEach((doc) => {
+              this.updateStatus(doc.id,this.room_at[i],data)
+            });
+          })
+          .catch(err =>{
+            console.log(err);
+          });
+        }
+      },
+      updateStatus(id,room_at,data){
+        const item = firestore.collection('items');
+        const query = item.doc(id)
+        query
+        .update({status:'ถูกยืม',room:room_at})
+        .then(()=>{
+          console.log('Updated Success!!');
+          this.addReturn(data);
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
+      addReturn(data){
+        const turn = firestore.collection('returns');
+        turn.add(data)
           .then(()=>{
             Swal.fire({
               title: 'บันทึกข้อมูลสำเร็จ',
@@ -155,40 +186,10 @@
           })
           .catch(err => console.log(err));
       },
-      queryDoc(){
-        for (let i = 0; i < this.items.length; i++) {
-          const docRef = firestore.collection('items');
-          const query = docRef
-            .where('item_code','==',this.items[i]);
-          query
-          .get()
-          .then(snapshot =>{
-            snapshot.forEach((doc) => {
-              // console.log(doc.id);
-              this.updateStatus(doc.id,this.room_at[i])
-            });
-          })
-          .catch(err =>{
-            console.log(err);
-          });
-        }
-      },
-      updateStatus(id,room_at){
-        const item = firestore.collection('items');
-        const query = item.doc(id)
-        query
-        .update({status:'ถูกยืม',room:room_at})
-        .then(()=>{
-          console.log('Updated Success!!');
-        })
-        .catch(err =>{
-          console.log(err);
-        });
-      },
       async submitHandler(){
         let obj = {
-          borrow_by:this.userProfile,
-          reason: this.reason,
+          return_by:this.userProfile,
+          note: this.note,
           created_at: new Date().toLocaleString()
         };
 
@@ -201,7 +202,7 @@
         }
 
         console.log(obj)
-        // this.addBorrow(obj);
+        this.queryDoc(obj);
       }
     }
   }

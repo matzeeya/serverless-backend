@@ -9,7 +9,7 @@
           <option v-for="allRoom in rooms" 
             v-bind:key="allRoom">
               {{allRoom}}
-            </option>
+          </option>
       </select>
     </div>
   <!-- </b-field> -->
@@ -36,7 +36,6 @@ export default {
         }
       })
     })
-    console.log('room ',this.rooms);
   }
 }
 </script>

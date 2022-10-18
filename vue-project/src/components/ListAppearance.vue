@@ -8,7 +8,7 @@
         <option v-for="appearance in appearances" 
           v-bind:key="appearance">
             {{appearance}}
-          </option>
+        </option>
     </select>
   </div>
 </template>
@@ -19,14 +19,13 @@ export default {
   },
   data () {
     return {
-      appearances: [
-        'ใช้งาน' , 'ชำรุด' , 'รอจำหน่าย' 
-      ],
+      appearances: {
+        0:'ใช้งาน', 
+        1:'ชำรุด', 
+        2:'รอจำหน่าย' 
+      },
       appearance: null
     }
-  },
-  created(){
-    console.log('state ',this.appearances);
   }
 }
 </script>

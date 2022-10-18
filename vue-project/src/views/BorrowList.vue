@@ -21,7 +21,7 @@
                 :id='key'
                 :value='item'
                 v-model='delItem'
-                @change='del'>
+                @change='deleteItem'>
             </td>
           </tr>
           <tr>
@@ -107,10 +107,13 @@
       getRoom(room){
         this.room_at.push(room);
       },
-      del(){
+      deleteItem(){
         Swal.fire({
-          title: 'ต้องการลบรายการ '+ this.delItem +' ใช่หรือไม่?',
-          icon: 'success'
+          title: 'เลขครุภัณฑ์: '+ this.delItem,
+          text: 'ต้องการลบรายการใช่หรือไม่?',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          icon: 'question'
         }).then((result) => {
           if (result.isConfirmed) {
             let rm = 'item:' + this.delItem;
@@ -128,9 +131,39 @@
         }
         liff.closeWindow();
       },
+      queryDoc(data){
+        for (let i = 0; i < this.items.length; i++) {
+          const docRef = firestore.collection('items');
+          const query = docRef
+            .where('item_code','==',this.items[i]);
+          query
+          .get()
+          .then(snapshot =>{
+            snapshot.forEach((doc) => {
+              // console.log(doc.id);
+              this.updateStatus(doc.id,this.room_at[i],data)
+            });
+          })
+          .catch(err =>{
+            console.log(err);
+          });
+        }
+      },
+      updateStatus(id,room_at,data){
+        const item = firestore.collection('items');
+        const query = item.doc(id)
+        query
+        .update({status:'ถูกยืม',room:room_at})
+        .then(()=>{
+          console.log('Updated Success!!');
+          this.addBorrow(data);
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
       addBorrow(data){
-        this.queryDoc();
-        const borrow = firestore.collection('borrow');
+        const borrow = firestore.collection('borrows');
         borrow.add(data)
           .then(()=>{
             Swal.fire({
@@ -145,36 +178,6 @@
           })
           .catch(err => console.log(err));
       },
-      queryDoc(){
-        for (let i = 0; i < this.items.length; i++) {
-          const docRef = firestore.collection('items');
-          const query = docRef
-            .where('item_code','==',this.items[i]);
-          query
-          .get()
-          .then(snapshot =>{
-            snapshot.forEach((doc) => {
-              // console.log(doc.id);
-              this.updateStatus(doc.id,this.room_at[i])
-            });
-          })
-          .catch(err =>{
-            console.log(err);
-          });
-        }
-      },
-      updateStatus(id,room_at){
-        const item = firestore.collection('items');
-        const query = item.doc(id)
-        query
-        .update({status:'ถูกยืม',room:room_at})
-        .then(()=>{
-          console.log('Updated Success!!');
-        })
-        .catch(err =>{
-          console.log(err);
-        });
-      },
       async submitHandler(){
         let obj = {
           borrow_by:this.userProfile,
@@ -186,7 +189,7 @@
           obj[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
         }
 
-        this.addBorrow(obj);
+        this.queryDoc(obj);
       }
     }
   }
