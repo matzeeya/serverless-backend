@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+  import firestore from '../../../firebase-config/vue/firebase';
   const line = require('../../../line-config/config')
   export default {
     data() {
@@ -36,8 +37,22 @@
       });
     },
     created() {
-      localStorage.setItem("item:"+this.code, this.code);
-      liff.closeWindow()
+      const docRef = firestore.collection('items');
+        const query = docRef
+          .where('item_code','==',this.code)
+          .where('status','==','ใช้งาน')
+        query
+        .get()
+        .then(snapshot =>{
+          snapshot.forEach((doc) => {
+            console.log(doc.id);
+            localStorage.setItem("item:"+this.code, this.code);
+            liff.closeWindow()
+          });
+        })
+        .catch(err =>{
+          console.log(err);
+        }); 
     }
   }
 </script>

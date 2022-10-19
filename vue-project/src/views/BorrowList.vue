@@ -141,22 +141,22 @@
           .then(snapshot =>{
             snapshot.forEach((doc) => {
               // console.log(doc.id);
-              this.updateStatus(doc.id,this.room_at[i],data)
+              this.updateStatus(doc.id,this.room_at[i])
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
+        this.addBorrow(data);
       },
-      updateStatus(id,room_at,data){
+      updateStatus(id,room_at){
         const item = firestore.collection('items');
         const query = item.doc(id)
         query
         .update({status:'ถูกยืม',room:room_at})
         .then(()=>{
           console.log('Updated Success!!');
-          this.addBorrow(data);
         })
         .catch(err =>{
           console.log(err);
@@ -185,10 +185,12 @@
           created_at: new Date().toLocaleString()
         };
 
+        let item = []
         for (let i = 0; i < this.items.length; i++) {
-          obj[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
+          item[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
         }
 
+        obj['items'] = item
         this.queryDoc(obj);
       }
     }

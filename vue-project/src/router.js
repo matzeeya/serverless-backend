@@ -3,8 +3,9 @@ import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import ViewData from './views/ViewData.vue'
 
-import AddList from './views/AddList.vue'
+import AddBorrowList from './views/AddBorrowList.vue'
 import BorrowList from './views/BorrowList.vue'
+import AddReturnList from './views/AddReturnList.vue'
 import ReturnList from './views/ReturnList.vue'
 import RepairList from './views/RepairList.vue'
 import SellList from './views/SellList.vue'
@@ -35,14 +36,19 @@ const routes = [{
   component: ViewData
 },
 {
-  path: '/addList/:code',
-  name: 'AddList',
-  component: AddList
+  path: '/addBorrowList/:code',
+  name: 'AddBorrowList',
+  component: AddBorrowList
 },
 {
   path: '/borrowList',
   name: 'BorrowList',
   component: BorrowList
+},
+{
+  path: '/addReturnList/:code',
+  name: 'AddReturnList',
+  component: AddReturnList
 },
 {
   path: '/returnList',
