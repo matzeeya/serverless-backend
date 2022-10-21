@@ -65,29 +65,24 @@
         query
         .get()
         .then(snapshot =>{
-          console.log("snap "+snapshot.doc)
-          snapshot.forEach((doc) => {
-            console.log("data: "+ doc.data())
-            if(doc.data()){
-              console.log("T")
-            }else{
-              console.log("F")
-            }
-            Swal.fire({
-              title: 'ไม่สามารถเพิ่มข้อมูลได้',
-              text: 'เนื่องจากมีข้อมูลครุภัณฑ์: '+ this.code +' ในระบบแล้วค่ะ',
-              icon: 'error'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // console.log("items: "+ doc.id)
-                liff.closeWindow()
-              }
-            })
-          });
+          console.log("snap ",snapshot)
+          if(snapshot.empty){
+            this.addItem(data)
+          }else{
+            snapshot.forEach((doc) => {
+              Swal.fire({
+                title: 'ไม่สามารถเพิ่มข้อมูลได้',
+                text: 'เนื่องจากมีข้อมูลครุภัณฑ์: '+ doc.data().item_code +' ในระบบแล้วค่ะ',
+                icon: 'error'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  liff.closeWindow()
+                }
+              })
+            });
+          }
         })
         .catch(err =>{
-          console.log("F")
-          this.addItem(data)
           console.log(err)
         }); 
       },
