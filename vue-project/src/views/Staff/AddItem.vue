@@ -14,7 +14,6 @@
   export default {
     data() {
       return {
-        photo: 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
         code: this.$route.params.code,
         userProfile: null,
         item: [],
@@ -47,18 +46,44 @@
         console.error('Error initialize LIFF: ', err)
       });
     },
-    created(){
+    created(){ // เช็คเลขครุภัณฑ์ใน inventory nu
       axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + this.code)
       .then((doc) => {
         this.item = doc.data[0];
         this.room_db = doc.data[0].room;
       })
       .catch((err) => {
-        console.log(err);
+        Swal.fire({
+          title: 'ไม่พบข้อมูล',
+          text: 'ไม่พบข้อมูลหมายเลขครุภัณฑ์: '+ this.code +' ในระบบค่ะ',
+          icon: 'error'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log(err);
+            liff.closeWindow()
+          }
+        })
       });
     },
     methods : {
-      chkItem(data){
+      pushItem(){ // เพิ่ม field ลงใน data
+        const search = this.room_db.search('ห้อง');
+        if(search >= 0){
+          const splitRoom = this.room_db.split('ห้อง ');
+          this.room_old = splitRoom[1];
+        }else{
+          this.room_old = this.room_db;
+        }
+        //Add All data to table items
+        this.item.room = this.room_old;
+        this.item.room_db = this.room_db;
+        this.item.room_old = this.room_old;
+        this.item.create_by = this.userProfile;
+        this.item.created_at = new Date().toLocaleString();
+
+        this.chkItem(this.item);        
+      },
+      chkItem(data){ // เช็คหมายเลขครุภัณฑ์ในฐานข้อมูล
         const docRef = firestore.collection('items')
         const query = docRef
           .where('item_code','==',this.code)
@@ -66,9 +91,9 @@
         .get()
         .then(snapshot =>{
           console.log("snap ",snapshot)
-          if(snapshot.empty){
+          if(snapshot.empty){ // หากไม่พบ สามารถเพิ่มข้อมูลใหม่ได้
             this.addItem(data)
-          }else{
+          }else{ // หากมีข้อมูลอยู่แล้ว ไม่สามารถเพิ่มข้อมูลได้
             snapshot.forEach((doc) => {
               Swal.fire({
                 title: 'ไม่สามารถเพิ่มข้อมูลได้',
@@ -86,7 +111,7 @@
           console.log(err)
         }); 
       },
-      addItem(data){
+      addItem(data){ // เพิ่มข้อมูลลงในฐานข้อมูล
         const item = firestore.collection('items');
         item.add(data)
           .then(()=>{
@@ -101,23 +126,6 @@
             })
           })
           .catch(err => console.log(err));
-      },
-      pushItem(){
-        const search = this.room_db.search('ห้อง');
-        if(search >= 0){
-          const splitRoom = this.room_db.split('ห้อง ');
-          this.room_old = splitRoom[1];
-        }else{
-          this.room_old = this.room_db;
-        }
-        //Add All data to table items
-        this.item.room = this.room_old;
-        this.item.room_db = this.room_db;
-        this.item.room_old = this.room_old;
-        this.item.create_by = this.userProfile;
-        this.item.created_at = new Date().toLocaleString();
-
-        this.chkItem(this.item);        
       }
     }
   }

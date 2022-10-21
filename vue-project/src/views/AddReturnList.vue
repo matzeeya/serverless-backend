@@ -1,17 +1,26 @@
 <template>
   <div>
-    <p>เพิ่มรายการคืนครุภัณฑ์: {{ code }}</p>
+    <b-field 
+      v-model='lblResult'
+      v-bind:type='isSuccessType'
+      v-bind:label='isSuccessMsg'>
+    </b-field>
   </div>
 </template>
 <script>
+  import Swal from 'sweetalert2';
   import firestore from '../../../firebase-config/vue/firebase';
-  const line = require('../../../line-config/config')
+  
+  const line = require('../../../line-config/config');
+
   export default {
     data() {
       return {
-        photo: "https://www.freeiconspng.com/uploads/no-image-icon-11.PNG",
         code: this.$route.params.code,
-        userProfile: null
+        userProfile: null,
+        lblResult:null,
+        isSuccessType:null,
+        isSuccessMsg:null
       }
     },
     mounted(){
@@ -36,24 +45,39 @@
         console.error('Error initialize LIFF: ', err)
       });
     },
-    created() {
+    created() { // ค้นข้อมูลในตาราง items เพื่อเอาสถานที่เก็บปัจจุบัน
       const docRef = firestore.collection('items');
       const query = docRef
-        .where('item_code','==',this.code);
+        .where('item_code','==',this.code)
+        .where('status','==','ถูกยืม')
       query
       .get()
       .then(snapshot =>{
-        snapshot.forEach((doc) => {
-          console.log("items: "+ doc.id);
-          this.addList(doc.data().room);
-        });
+        if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ถูกยืม' สามารถคืนได้
+          snapshot.forEach((doc) => {
+            // console.log("items: "+ doc.id);
+            this.addList(doc.data().room);
+          });
+        }else{ // หากไม่พบข้อมูลหรือ status != 'ถูกยืม' ไม่สามารถคืนได้
+          Swal.fire({
+            title: 'ไม่พบข้อมูล',
+            text: 'ไม่พบข้อมูลครุภัณฑ์: '+ this.code +' ในระบบค่ะ',
+            icon: 'error'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.isSuccessType = 'is-danger'
+              this.isSuccessMsg = 'ไม่พบข้อมูลครุภัณฑ์: ' + this.code +' ในระบบค่ะ'
+              liff.closeWindow()
+            }
+          })
+        }
       })
       .catch(err =>{
         console.log(err);
       }); 
     },
     methods:{
-      addList(room){
+      addList(room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
         const docRef = firestore.collection('borrows');
         const query = docRef
           .where('items','array-contains',{
@@ -64,11 +88,27 @@
         query
         .get()
         .then(snapshot =>{
-          snapshot.forEach((doc) => {
-            console.log("borrow: "+ doc.id);
-            localStorage.setItem("item:"+this.code, this.code);
-            liff.closeWindow()
-          });
+          if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
+            snapshot.forEach(() => {
+              // console.log("borrow: "+ doc.id);
+              this.isSuccessType = 'is-success'
+              this.isSuccessMsg = 'เพิ่มรายการคืนครุภัณฑ์: ' + this.code
+              localStorage.setItem("item:"+this.code, this.code);
+              liff.closeWindow()
+            });
+          }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
+            Swal.fire({
+            title: 'ไม่สามารถเพิ่มข้อมูลได้',
+            text: 'ไม่พบข้อมูลครุภัณฑ์: '+ this.code +' ในรายการยืมค่ะ',
+            icon: 'error'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.isSuccessType = 'is-danger'
+              this.isSuccessMsg = 'ไม่พบข้อมูลครุภัณฑ์: ' + this.code +' ในรายการยืมค่ะ'
+              liff.closeWindow()
+            }
+          })
+          }
         })
         .catch(err =>{
           console.log(err);

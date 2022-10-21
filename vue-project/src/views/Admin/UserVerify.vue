@@ -1,19 +1,18 @@
 <template>
   <div>
-    <!-- <form @submit.prevent="submit"> -->
-      <div 
-        v-for="user,index in users"
-        :key="index"
-        class="card" 
-        style="width: 18rem;">
-        <img :src="user.link" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">ชื่อ: {{ user.name}}</h5>
-          <p class="card-text">ประเภทผูัใช้งาน: {{ user.utype }}</p>
-          <button class="btn btn-primary" @click="approve($event)" :value="user.id">Approved</button>
-          <button class="btn btn-danger" @click="reject($event)"  :value="user.id">Reject</button>
-        </div>
+    <div 
+      v-for="user,index in users"
+      :key="index"
+      class="card" 
+      style="width: 18rem;">
+      <img :src="user.link" class="card-img-top">
+      <div class="card-body">
+        <h5 class="card-title">ชื่อ: {{ user.name}}</h5>
+        <p class="card-text">ประเภทผูัใช้งาน: {{ user.utype }}</p>
+        <button class="btn btn-primary" @click="approve($event)" :value="user.id">Approved</button>
+        <button class="btn btn-danger" @click="reject($event)"  :value="user.id">Reject</button>
       </div>
+    </div>
   </div>
 </template>
 

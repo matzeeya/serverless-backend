@@ -68,7 +68,6 @@
     },
     data() {
       return {
-        photo: 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
         code: this.$route.params.code,
         userProfile: null,
         itemStatus: [],
@@ -101,21 +100,21 @@
       });
     },
     created() {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = 0; i < localStorage.length; i++) { // loop หาเลขครุภัณฑ์
         const key = localStorage.key(i);
         if(key.search('item:') >= 0){
-          this.items.push(localStorage.getItem(key));
+          this.items.push(localStorage.getItem(key)); // push เลขครุภัณฑ์ใน items
         }
       }
     },
     methods : {
-      getRoom(room){
+      getRoom(room){ // เลือกห้องที่เก็บปัจจุบัน
         this.room_at.push(room);
       },
-      getState(state){
+      getState(state){ // เลือกสภาพการใช้งาน
         this.itemStatus.push(state);
       },
-      deleteItem(){
+      deleteItem(){ // เมื่อเลือก 'ลบ' ใน checkbok
         Swal.fire({
           title: 'เลขครุภัณฑ์: '+ this.delItem,
           text: 'ต้องการลบรายการใช่หรือไม่?',
@@ -130,7 +129,7 @@
           }
         })
       },
-      cancelHandler(){
+      cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if(key.search('item:') >= 0){
@@ -139,31 +138,57 @@
         }
         liff.closeWindow();
       },
-      queryDoc(data){
+      queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) {
           const docRef = firestore.collection('items');
           const query = docRef
-            .where('item_code','==',this.items[i]);
+            .where('item_code','==',this.items[i])
+            .where('status','==','ถูกยืม')
           query
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.updateStatus(doc.id,this.room_at[i],data)
+              this.updateStateBorrow(this.items[i],doc.data().room) // update สถานะในตาราง borrows
+              // this.updateStatus(doc.id,this.room_at[i],this.itemStatus[i]) // เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
+        // this.addReturn(data);
       },
-      updateStatus(id,room_at,data){
+      updateStateBorrow(id,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+        const docRef = firestore.collection('borrows');
+        const query = docRef
+          .where('items','array-contains',{
+            'item_code': id,
+            'room': room,
+            'status': '0'
+          });
+        query
+        .get()
+        .then(snapshot =>{
+          if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
+            snapshot.forEach((doc) => {
+              console.log(doc.id)
+              console.log(doc.data())
+            });
+          }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
+            console.log('ไม่สามารถคืนรายการได้')
+          }
+        })
+        .catch(err =>{
+          console.log(err);
+        }); 
+      },
+      updateStatus(id,room_at,state){
         const item = firestore.collection('items');
         const query = item.doc(id)
         query
-        .update({status:'ถูกยืม',room:room_at})
+        .update({status:state,room:room_at})
         .then(()=>{
           console.log('Updated Success!!');
-          this.addReturn(data);
         })
         .catch(err =>{
           console.log(err);
@@ -187,22 +212,35 @@
           .catch(err => console.log(err));
       },
       async submitHandler(){
-        let obj = {
-          return_by:this.userProfile,
-          note: this.note,
-          created_at: new Date().toLocaleString()
-        };
+        if(this.items.length > 0){
+          let obj = {
+            return_by:this.userProfile,
+            note: this.note,
+            created_at: new Date().toLocaleString()
+          };
 
-        for (let i = 0; i < this.items.length; i++) {
-          obj[i] = {
-            'item_code':this.items[i],
-            'room':this.room_at[i],
-            'status':this.itemStatus[i]
+          let item = []
+          for (let i = 0; i < this.items.length; i++) {
+            item[i] = {
+              'item_code':this.items[i],
+              'room':this.room_at[i],
+              'status':this.itemStatus[i]
+            }
           }
-        }
 
-        console.log(obj)
-        this.queryDoc(obj);
+          obj['items'] = item
+          this.queryDoc(obj);
+        }else{
+          Swal.fire({
+            title: 'ผิดพลาด',
+            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
+            icon: 'error'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.closeWindow()
+            }
+          })
+        }
       }
     }
   }
