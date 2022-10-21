@@ -34,7 +34,7 @@
           liff.getProfile()
           .then(profile => {
             this.userProfile = profile.userId;
-            this.pushItem();
+            this.pushItem(); //Add data in DB
           })
           .catch((err) => {
             console.error(err)
@@ -58,12 +58,46 @@
       });
     },
     methods : {
+      chkItem(data){
+        const docRef = firestore.collection('items')
+        const query = docRef
+          .where('item_code','==',this.code)
+        query
+        .get()
+        .then(snapshot =>{
+          console.log("snap "+snapshot.doc)
+          snapshot.forEach((doc) => {
+            console.log("data: "+ doc.data())
+            if(doc.data()){
+              console.log("T")
+            }else{
+              console.log("F")
+            }
+            Swal.fire({
+              title: 'ไม่สามารถเพิ่มข้อมูลได้',
+              text: 'เนื่องจากมีข้อมูลครุภัณฑ์: '+ this.code +' ในระบบแล้วค่ะ',
+              icon: 'error'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // console.log("items: "+ doc.id)
+                liff.closeWindow()
+              }
+            })
+          });
+        })
+        .catch(err =>{
+          console.log("F")
+          this.addItem(data)
+          console.log(err)
+        }); 
+      },
       addItem(data){
         const item = firestore.collection('items');
         item.add(data)
           .then(()=>{
             Swal.fire({
               title: 'บันทึกข้อมูลสำเร็จ',
+              text: 'เพิ่มข้อมูลครุภัณฑ์: '+ this.code +' เรียบร้อยแล้วค่ะ',
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
@@ -87,7 +121,8 @@
         this.item.room_old = this.room_old;
         this.item.create_by = this.userProfile;
         this.item.created_at = new Date().toLocaleString();
-        this.addItem(this.item);
+
+        this.chkItem(this.item);        
       }
     }
   }

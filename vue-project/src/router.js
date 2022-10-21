@@ -13,14 +13,17 @@ import SellList from './views/SellList.vue'
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
 import SearchItem from './views/Default/SearchItem.vue'
+
 import Profile from './views/User/UserProfile.vue'
 import BorrowItem from './views/User/BorrowItem.vue'
 import ReturnItem from './views/User/ReturnItem.vue'
+
 import CheckItem from './views/Staff/CheckItem.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
 import AddItem from './views/Staff/AddItem.vue'
 import Movement from './views/Staff/Movement.vue'
+
 import Verify from './views/Admin/UserVerify.vue'
 
 Vue.use(VueRouter)
