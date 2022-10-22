@@ -148,17 +148,20 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.updateStateBorrow(this.items[i],doc.data().room) // update สถานะในตาราง borrows
-              // this.updateStatus(doc.id,this.room_at[i],this.itemStatus[i]) // เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
+              this.queryBorrowData(this.items[i],this.room_at[i],doc.data().room) // query ค่าในตาราง borrow 
+              this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
-        // this.addReturn(data);
+        this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
       },
-      updateStateBorrow(id,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+      queryBorrowData(id,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+        let updateStatus = {};
+        let obj = [];
+      
         const docRef = firestore.collection('borrows');
         const query = docRef
           .where('items','array-contains',{
@@ -171,8 +174,23 @@
         .then(snapshot =>{
           if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
             snapshot.forEach((doc) => {
-              console.log(doc.id)
-              console.log(doc.data())
+              for(let i=0; i < doc.data().items.length; i++){ // loop จำนวนรายการยืมใน field items
+                if(doc.data().items[i].item_code == id){ // ถ้า item_code ใน field ตรงกับ item_code ที่ต้องการคืน
+                  obj[`${i}`] = { // เปลี่ยนค่าใน field ตามค่าที่รับเข้ามาใหม่
+                    'item_code': id,
+                    'room': room_at,
+                    'status':'1'
+                  }
+                }else{ // ถ้า item_code ใน field ไม่ตรงกับ item_code ที่ต้องการคืน
+                  obj[`${i}`] = { // คงค่าเดิมที่มีในตาราง borrows
+                    'item_code': doc.data().items[i].item_code,
+                    'room': doc.data().items[i].room,
+                    'status': doc.data().items[i].status
+                  }
+                }
+              }
+              updateStatus['items'] = obj;
+              this.updateBorrowStatus(doc.id,updateStatus); // update สถานะในตาราง borrows
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -182,19 +200,31 @@
           console.log(err);
         }); 
       },
-      updateStatus(id,room_at,state){
-        const item = firestore.collection('items');
-        const query = item.doc(id)
+      updateBorrowStatus(id,data){ // update สถานะในตาราง borrows
+        const docRef = firestore.collection('borrows');
+        const query = docRef.doc(id)
         query
-        .update({status:state,room:room_at})
+        .update(data)
         .then(()=>{
-          console.log('Updated Success!!');
+          console.log('Updated Borrows Status Success!!');
         })
         .catch(err =>{
           console.log(err);
         });
       },
-      addReturn(data){
+      updateItemStatus(id,room_at,state){
+        const item = firestore.collection('items');
+        const query = item.doc(id)
+        query
+        .update({status:state,room:room_at})
+        .then(()=>{
+          console.log('Updated Items Status Success!!');
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
+      addReturn(data){ // เพิ่มรายการคืนลงในตาราง returns
         const turn = firestore.collection('returns');
         turn.add(data)
           .then(()=>{
