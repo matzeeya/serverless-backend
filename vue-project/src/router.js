@@ -7,7 +7,9 @@ import AddBorrowList from './views/AddBorrowList.vue'
 import BorrowList from './views/BorrowList.vue'
 import AddReturnList from './views/AddReturnList.vue'
 import ReturnList from './views/ReturnList.vue'
+import AddRepairList from './views/AddRepairList.vue'
 import RepairList from './views/RepairList.vue'
+import AddSellList from './views/AddSellList.vue'
 import SellList from './views/SellList.vue'
 
 import Regiter from './views/Default/UserRegister.vue'
@@ -59,9 +61,19 @@ const routes = [{
   component: ReturnList
 },
 {
+  path: '/addRepairList/:code',
+  name: 'AddRepairList',
+  component: AddRepairList
+},
+{
   path: '/repairList',
   name: 'RepairList',
   component: RepairList
+},
+{
+  path: '/addSellList/:code',
+  name: 'AddSellList',
+  component: AddSellList
 },
 {
   path: '/sellList',
