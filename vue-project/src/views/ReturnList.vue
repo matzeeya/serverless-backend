@@ -15,7 +15,11 @@
           <tr v-for='item,index in items' :key='index'>
             <th scope='row'>{{ index + 1 }}</th>
             <td>{{ item }}</td>
-            <td><ListRoom :getAllRoom='getRoom'/></td>
+            <td>
+              <ListRoom 
+                :getAllRoom='getRoom'
+                style='width:140px'/>
+            </td>
             <td><ListAppearance :getAppearances='getState'/></td>
             <td>
               <input 
@@ -27,7 +31,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan='4'>
+            <td colspan='5'>
               <b-field label='หมายเหตุ'>
                 <b-input 
                   type='textarea'
@@ -40,7 +44,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <td colspan='2'>
+            <td colspan='3'>
               <button class='button is-success' type='submit'>ยืนยันรายการคืน</button>
             </td>
             <td colspan='2'>

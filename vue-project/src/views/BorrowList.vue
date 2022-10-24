@@ -14,7 +14,11 @@
           <tr v-for='item,index in items' :key='index'>
             <th scope='row'>{{ index + 1 }}</th>
             <td>{{ item }}</td>
-            <td><ListRoom :getAllRoom='getRoom'/></td>
+            <td>
+              <ListRoom 
+                :getAllRoom='getRoom'
+                style='width:140px'/>
+            </td>
             <td>
               <input 
                 type='checkbox' 
