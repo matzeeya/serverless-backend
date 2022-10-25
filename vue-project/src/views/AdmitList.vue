@@ -32,7 +32,7 @@
         <tfoot>
           <tr>
             <td colspan='2'>
-              <button class='button is-success' type='submit'>ยืนยันรายการจำหน่าย</button>
+              <button class='button is-success' type='submit'>ยืนยันรายการ</button>
             </td>
             <td colspan='2'>
               <button class='button is-danger' @click='cancelHandler'>ยกเลิก</button>
@@ -45,19 +45,23 @@
 </template>
 <script>
   import Swal from 'sweetalert2'
+  import ListAppearance from '../components/ListAppearance.vue';
   import ListRoom from '../components/ListRoom.vue';
+
   import firestore from '../../../firebase-config/vue/firebase';
 
   const line = require('../../../line-config/config');
 
   export default {
     components: {
-      ListRoom
+      ListRoom,
+      ListAppearance
     },
     data() {
       return {
         code: this.$route.params.code,
         userProfile: null,
+        itemStatus: [],
         items: [],
         delItem: [],
         room_at: []
@@ -122,46 +126,101 @@
         liff.closeWindow();
       },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
-        for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
+        for (let i = 0; i < this.items.length; i++) {
           const docRef = firestore.collection('items');
           const query = docRef
             .where('item_code','==',this.items[i])
-            .where('status','==','ใช้งาน')
+            .where('status','==','แจ้งซ่อม')
           query
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              // console.log(doc.id);
-              this.updateStatus(doc.id,this.room_at[i]) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
+              this.queryAdmitData(this.items[i],this.room_at[i],doc.data().room) // query ค่าในตาราง repair 
+              this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
-        this.addSell(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการจำหน่ายที่ตาราง sells
+        this.addAdmit(data); // เพิ่มรายการคืนลงในตาราง admits
       },
-      updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
-        const item = firestore.collection('items');
-        const query = item.doc(id)
+      queryAdmitData(id,room_at,room){ // ค้นข้อมูลในตาราง admits เพื่อคืนครุภัณฑ์
+        let updateStatus = {};
+        let obj = [];
+      
+        const docRef = firestore.collection('repairs');
+        const query = docRef
+          .where('items','array-contains',{
+            'item_code': id,
+            'room': room,
+            'status': '0'
+          });
         query
-        .update({status:'จำหน่าย',room:room_at})
+        .get()
+        .then(snapshot =>{
+          if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
+            snapshot.forEach((doc) => {
+              for(let i=0; i < doc.data().items.length; i++){ // loop จำนวนรายการยืมใน field items
+                if(doc.data().items[i].item_code == id){ // ถ้า item_code ใน field ตรงกับ item_code ที่ต้องการคืน
+                  obj[`${i}`] = { // เปลี่ยนค่าใน field ตามค่าที่รับเข้ามาใหม่
+                    'item_code': id,
+                    'room': room_at,
+                    'status':'1'
+                  }
+                }else{ // ถ้า item_code ใน field ไม่ตรงกับ item_code ที่ต้องการคืน
+                  obj[`${i}`] = { // คงค่าเดิมที่มีในตาราง repairs
+                    'item_code': doc.data().items[i].item_code,
+                    'room': doc.data().items[i].room,
+                    'status': doc.data().items[i].status
+                  }
+                }
+              }
+              updateStatus['items'] = obj;
+              this.updateRepairStatus(doc.id,updateStatus); // update สถานะในตาราง repairs
+            });
+          }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
+            console.log('ไม่สามารถคืนรายการได้')
+          }
+        })
+        .catch(err =>{
+          console.log(err);
+        }); 
+      },
+      updateRepairStatus(id,data){ // update สถานะในตาราง repairs
+        const docRef = firestore.collection('repairs');
+        const query = docRef.doc(id)
+        query
+        .update(data)
         .then(()=>{
-          console.log('Updated Success!!');
+          console.log('Updated Borrows Status Success!!');
         })
         .catch(err =>{
           console.log(err);
         });
       },
-      addSell(data){ // เพิ่มข้อมูลรายการจำหน่ายในตาราง sells
-        const sell = firestore.collection('sells');
-        sell.add(data)
+      updateItemStatus(id,room_at,state){
+        const item = firestore.collection('items');
+        const query = item.doc(id)
+        query
+        .update({status:state,room:room_at})
+        .then(()=>{
+          console.log('Updated Items Status Success!!');
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
+      addAdmit(data){ // เพิ่มรายการคืนลงในตาราง admits
+        const admit = firestore.collection('admits');
+        admit.add(data)
           .then(()=>{
             Swal.fire({
               title: 'บันทึกข้อมูลสำเร็จ',
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
+                // localStorage.clear();
                 this.cancelHandler();
                 liff.closeWindow();
               }
@@ -173,12 +232,16 @@
         if(this.items.length > 0){
           let obj = {
             created_by:this.userProfile,
+            note: this.note,
             created_at: new Date().toLocaleString()
           };
 
           let item = []
-          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการจำหน่ายลงใน data สำหรับไว้ add data ลงตาราง sells
-            item[i] = {'item_code':this.items[i],'room':this.room_at[i]}
+          for (let i = 0; i < this.items.length; i++) {
+            item[i] = {
+              'item_code':this.items[i],
+              'room':this.room_at[i]
+            }
           }
 
           obj['items'] = item

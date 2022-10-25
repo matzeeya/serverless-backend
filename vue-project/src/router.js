@@ -9,6 +9,8 @@ import AddReturnList from './views/AddReturnList.vue'
 import ReturnList from './views/ReturnList.vue'
 import AddRepairList from './views/AddRepairList.vue'
 import RepairList from './views/RepairList.vue'
+import AddAdmitList from './views/AddAdmitList.vue'
+import AdmitList from './views/AdmitList.vue'
 import AddSellList from './views/AddSellList.vue'
 import SellList from './views/SellList.vue'
 
@@ -69,6 +71,16 @@ const routes = [{
   path: '/repairList',
   name: 'RepairList',
   component: RepairList
+},
+{
+  path: '/addAdmitList/:code',
+  name: 'AddAdmitList',
+  component: AddAdmitList
+},
+{
+  path: '/admitList',
+  name: 'AdmitList',
+  component: AdmitList
 },
 {
   path: '/addSellList/:code',

@@ -76,7 +76,6 @@ function checkItem(req, res, doc) {
                 'label': 'แนบรูป',
                 'uri': 'https://line.me/R/nv/camera/'
               },
-              'color': '#89D1F3FF',
               'style': 'primary'
             }
           ]
@@ -101,8 +100,7 @@ function checkItem(req, res, doc) {
                 'label': 'แก้ไข',
                 'uri': `${config.LIFF_URL}/movement/${doc.item_code}`
               },
-              'color': '#F1AE6FFF',
-              'style': 'primary'
+              'style': 'secondary'
             }
           ]
         }

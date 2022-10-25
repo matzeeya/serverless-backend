@@ -1,8 +1,5 @@
 const axios = require('axios');
-
 const config = require('../config');
-
-
 const check = require('../models/checkItem');
 const search = require('../models/searchItem');
 const borrow = require('../models/borrowItem');
@@ -22,7 +19,7 @@ const linebot = async(req, res) => {
   if(req.method === "POST"){
     if(event.message.type === "text"){
       var msg = event.message.text.split(": ");
-      if(msg[1] === "null"){
+      if(msg[1] !== "null"){
         if(msg[0] === "หมายเลขครุภัณฑ์"){
           check.getdata(req, res, msg[1]);
         }else if(msg[0] === "ข้อมูลครุภัณฑ์"){
