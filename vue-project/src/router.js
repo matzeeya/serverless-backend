@@ -25,10 +25,11 @@ import ReturnItem from './views/User/ReturnItem.vue'
 import CheckItem from './views/Staff/CheckItem.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
-import AddItem from './views/Staff/AddItem.vue'
+import AddItemCode from './views/Staff/AddItem.vue'
 import Movement from './views/Staff/Movement.vue'
 
 import Verify from './views/Admin/UserVerify.vue'
+import AddItem from './views/Admin/AddItem.vue'
 
 Vue.use(VueRouter)
 
@@ -133,9 +134,14 @@ const routes = [{
   component: SellItem
 },
 {
-  path: '/addItem/:code',
+  path: '/addItem',
   name: 'AddItem',
   component: AddItem
+},
+{
+  path: '/addItem/:code',
+  name: 'AddItemCode',
+  component: AddItemCode
 },
 {
   path: '/movement/:code',
