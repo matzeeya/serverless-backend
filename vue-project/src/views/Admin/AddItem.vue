@@ -11,9 +11,6 @@ export default {
       liffId: line.liffID
     }).then(() => {
       liff.scanCode().then(function (code){
-        // liff.openWindow({
-        //   url: line.liffUrl + '/addItem/' + code.value
-        // })
         window.location.replace(line.liffUrl + '/addItem/' + code.value);
       });
     }).catch((err) => {

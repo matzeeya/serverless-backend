@@ -1,13 +1,13 @@
 <template>
-  <!-- <b-field label="สถานที่เก็บปัจจุบัน: "> -->
-    <div class="select">
-      <select id="allRoom"
-        name="allRoom"
-        v-model="allRoom"
-        @change="getAllRoom(allRoom)"
-        style="width:280px">
-          <option v-for="allRoom in rooms" 
-            v-bind:key="allRoom">
+  <!-- <b-field label='สถานที่เก็บปัจจุบัน: '> -->
+    <div class='select'>
+      <select id='allRoom'
+        name='allRoom'
+        v-model='allRoom'
+        @change='getAllRoom(allRoom)'
+        style='width:280px'>
+          <option v-for='allRoom in rooms' 
+            v-bind:key='allRoom'>
               {{allRoom}}
           </option>
       </select>
@@ -15,7 +15,7 @@
   <!-- </b-field> -->
 </template>
 <script>
-import firestore from "../../../firebase-config/vue/firebase"
+import firestore from '../../../firebase-config/vue/firebase'
 export default {
   name: 'Room',
   props:{
@@ -28,7 +28,7 @@ export default {
     }
   },
   created() {
-    const room = firestore.collection("rooms").orderBy("name","asc")
+    const room = firestore.collection('rooms').orderBy('name','asc')
     room.get().then(snapshot => {
       snapshot.forEach(doc => {
         if (doc.data()){

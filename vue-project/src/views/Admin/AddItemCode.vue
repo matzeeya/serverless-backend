@@ -90,7 +90,7 @@
         query
         .get()
         .then(snapshot =>{
-          console.log("snap ",snapshot)
+          console.log('snap ',snapshot)
           if(snapshot.empty){ // หากไม่พบ สามารถเพิ่มข้อมูลใหม่ได้
             this.addItem(data)
           }else{ // หากมีข้อมูลอยู่แล้ว ไม่สามารถเพิ่มข้อมูลได้
@@ -121,7 +121,14 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                liff.closeWindow()
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'เพิ่มข้อมูลครุภัณฑ์หมายเลข: ' + this.code
+                  }
+                ]).then(() => {
+                  liff.closeWindow();
+                })
               }
             })
           })

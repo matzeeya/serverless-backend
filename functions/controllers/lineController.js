@@ -22,7 +22,7 @@ const linebot = async(req, res) => {
       if(msg[1] !== "null"){
         if(msg[0] === "หมายเลขครุภัณฑ์"){
           check.getdata(req, res, msg[1]);
-        }else if(msg[0] === "ข้อมูลครุภัณฑ์"){
+        }else if(msg[0] === "ข้อมูลครุภัณฑ์" || msg[0] === "เพิ่มข้อมูลครุภัณฑ์หมายเลข"){
           search.getdata(req, res, msg[1]);
         }else if(msg[0] === "ยืมครุภัณฑ์"){
           borrow.getdata(req, res, msg[1]);
