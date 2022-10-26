@@ -1,24 +1,34 @@
 <template>
-  <div id='app' ref='document'>
-    <div id='element-to-convert'>
-      <center>
-        <img width='400' src='https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg' />
-      </center>
-    </div>  
-    <button @click='exportToPDF'>Export to PDF</button>
+  <div>
+    <div id="html">
+        <!-- <center>
+          <img width='400' src='https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg' />
+        </center> -->
+        <h1>Hello World!! สวัสดี</h1>
+    </div>
+    <button @click="exportPDF">Download PDF</button>
   </div>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" 
-  integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" 
-  crossorigin="anonymous" referrerpolicy="no-referrer">
-</script>
 <script>
+// import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import THSarabunPSK from '../../assets/fonts/THSarabunPSK.ttf';
+
 export default {
   methods: {
-		exportToPDF() {
-			html2pdf(document.getElementById('element-to-convert'));
-		}
+		exportPDF() {
+      var pdf = new jsPDF('p', 'pt', 'a4');
+      const content = document.getElementById('html').innerHTML;
+      pdf.addFileToVFS("THSarabunPSK.ttf", THSarabunPSK);
+      pdf.addFont("THSarabunPSK.ttf", "THSarabunPSK", "normal");
+      pdf.setFont("THSarabunPSK");
+      pdf.html(content, {
+        callback: function (pdf) {
+          pdf.save('mypdf.pdf')
+        }
+      }); 
+    }
 	}
 }
 </script>

@@ -10,6 +10,8 @@
     "buefy": "^0.9.20",
     "core-js": "^3.6.5",
     "firebase": "^9.5.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "sweetalert2": "^11.4.33",
     "vue": "^2.6.11",
     "vue-devtools": "^5.1.4",
