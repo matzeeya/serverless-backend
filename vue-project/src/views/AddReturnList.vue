@@ -60,13 +60,13 @@
           });
         }else{ // หากไม่พบข้อมูลหรือ status != 'ถูกยืม' ไม่สามารถคืนได้
           Swal.fire({
-            title: 'ไม่พบข้อมูล',
-            text: 'ไม่พบข้อมูลครุภัณฑ์: '+ this.code +' ในระบบค่ะ',
+            title: 'ไม่สามารถคืนได้',
+            text: 'ไม่พบข้อมูลครุภัณฑ์: '+ this.code +' ในรายการยืมค่ะ',
             icon: 'error'
           }).then((result) => {
             if (result.isConfirmed) {
               this.isSuccessType = 'is-danger'
-              this.isSuccessMsg = 'ไม่พบข้อมูลครุภัณฑ์: ' + this.code +' ในระบบค่ะ'
+              this.isSuccessMsg = 'ไม่พบข้อมูลครุภัณฑ์: ' + this.code +' ในรายการยืมค่ะ'
               liff.closeWindow()
             }
           })
@@ -91,10 +91,25 @@
           if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
             snapshot.forEach(() => {
               // console.log("borrow: "+ doc.id);
-              this.isSuccessType = 'is-success'
-              this.isSuccessMsg = 'เพิ่มรายการคืนครุภัณฑ์: ' + this.code
-              localStorage.setItem("item:"+this.code, this.code);
-              liff.closeWindow()
+              Swal.fire({
+                title: 'เพิ่มรายการสำเร็จ',
+                text: 'เพิ่มรายการคืนครุภัณฑ์: '+ doc.data().item_code +' เรียบร้อยแล้วค่ะ',
+                icon: 'success'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'เพิ่มรายการคินเรียบร้อยแล้วค่ะ'
+                    }
+                  ]).then(() => {
+                    this.isSuccessType = 'is-success'
+                    this.isSuccessMsg = 'เพิ่มรายการคืนครุภัณฑ์: ' + this.code
+                    localStorage.setItem("item:"+this.code, this.code);
+                    liff.closeWindow()
+                  })
+                }
+              })
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             Swal.fire({
@@ -103,9 +118,17 @@
             icon: 'error'
           }).then((result) => {
             if (result.isConfirmed) {
-              this.isSuccessType = 'is-danger'
-              this.isSuccessMsg = 'ไม่พบข้อมูลครุภัณฑ์: ' + this.code +' ในรายการยืมค่ะ'
-              liff.closeWindow()
+              liff.sendMessages([
+                {
+                  'type' : 'text',
+                  'text' : 'ไม่สามารถเพิ่มรายการคืนได้ค่ะ'
+                }
+              ]).then(() => {
+                this.isSuccessType = 'is-danger'
+                this.isSuccessMsg = 'ไม่สามารถเพิ่มรายการคืนครุภัณฑ์: ' + this.code +' ได้ กรุณาตรวจสอบสถานะครุภัณฑ์อีกครั้ง'
+                liff.closeWindow()
+              })
+              
             }
           })
           }

@@ -5,6 +5,7 @@ const search = require('../models/searchItem');
 const borrow = require('../models/borrowItem');
 const back = require('../models/returnItem');
 const repair = require('../models/repairItem');
+const admit = require('../models/admitItem');
 const sell = require('../models/sellItem');
 
 const LINE_MESSAGING_API = "https://api.line.me/v2/bot";
@@ -30,6 +31,8 @@ const linebot = async(req, res) => {
           back.getdata(req, res, msg[1]);
         }else if(msg[0] === "แจ้งซ่อมครุภัณฑ์"){
           repair.getdata(req, res, msg[1]);
+        }else if(msg[0] === "ครุภัณฑ์หมายเลข"){
+          admit.getdata(req, res, msg[1]);
         }else if(msg[0] === "จำหน่ายครุภัณฑ์"){
           sell.getdata(req, res, msg[1]);
         }else{

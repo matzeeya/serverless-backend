@@ -162,8 +162,15 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                this.cancelHandler();
-                liff.closeWindow();
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'จำหน่ายเรียบร้อยแล้วค่ะ'
+                  }
+                ]).then(() => {
+                  this.cancelHandler();
+                  liff.closeWindow();
+                })
               }
             })
           })

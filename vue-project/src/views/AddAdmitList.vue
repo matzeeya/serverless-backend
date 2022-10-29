@@ -91,10 +91,25 @@
           if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
             snapshot.forEach(() => {
               // console.log("borrow: "+ doc.id);
-              this.isSuccessType = 'is-success'
-              this.isSuccessMsg = 'เพิ่มรายการครุภัณฑ์: ' + this.code
-              localStorage.setItem("item:"+this.code, this.code);
-              liff.closeWindow()
+              Swal.fire({
+                title: 'เพิ่มรายการสำเร็จ',
+                text: 'เพิ่มรายการครุภัณฑ์: '+ doc.data().item_code +' เรียบร้อยแล้วค่ะ',
+                icon: 'success'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'สำเร็จ'
+                    }
+                  ]).then(() => {
+                    this.isSuccessType = 'is-success'
+                    this.isSuccessMsg = 'เพิ่มรายการครุภัณฑ์: ' + this.code
+                    localStorage.setItem("item:"+this.code, this.code);
+                    liff.closeWindow()
+                  })
+                }
+              })
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             Swal.fire({

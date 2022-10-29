@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 // เชื่อมต่อ firebase
-// const firestore = require('../../firebase-config/node/firebase');
+const firestore = require('../../firebase-config/node/firebase');
 const config = require('../config');
 
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
@@ -118,19 +118,41 @@ function getdata(req, res, id) {
   const decode = id.search('eng');
   if(decode >= 0){
     code = decodeItem(id);
-    console.log('decode '+code);
+    // console.log('decode '+code);
   }else{
     code = id;
   }
-  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
-    .then((doc) => {
-      let item = doc.data[0];
-      borrowItem(req, res, item);
-    })
-    .catch((err) => {
-      reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
-      console.log(err);
-    });
+  // axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
+  //   .then((doc) => {
+  //     let item = doc.data[0];
+  //     borrowItem(req, res, item);
+  //   })
+  //   .catch((err) => {
+  //     reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
+  //     console.log(err);
+  //   });
+  const docRef = firestore.collection('items');
+  const query = docRef
+    .where('item_code','==',code)
+    .where('status','==','ใช้งาน')
+  query
+  .get()
+  .then(snapshot =>{
+    if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ใช้งาน' สามารถยืมได้
+      snapshot.forEach((doc) => {
+        let item = doc.data();
+        borrowItem(req, res, item);
+      });
+    }else{ // หากไม่พบข้อมูลหรือ status != 'ใช้งาน' ไม่สามารถยืมได้
+      reply(event.replyToken, { 
+        type: 'text', 
+        text: 'ไม่สามารถยืมได้ กรุณาตรวจสอบอีกครั้งค่ะ'
+      });
+    }
+  })
+  .catch(err =>{
+    console.log(err);
+  }); 
 }
 
 function decodeItem(code){

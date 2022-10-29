@@ -122,15 +122,37 @@ function getdata(req, res, id) {
   }else{
     code = id;
   }
-  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
-    .then((doc) => {
-      let item = doc.data[0];
-      sellItem(req, res, item);
-    })
-    .catch((err) => {
-      reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
-      console.log(err);
-    });
+  // axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
+  //   .then((doc) => {
+  //     let item = doc.data[0];
+  //     sellItem(req, res, item);
+  //   })
+  //   .catch((err) => {
+  //     reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
+  //     console.log(err);
+  //   });
+  const docRef = firestore.collection('items');
+  const query = docRef
+    .where('item_code','==',code)
+    .where('status','in',['รอจำหน่าย','ใช้งาน'])
+  query
+  .get()
+  .then(snapshot =>{
+    if(!snapshot.empty){ // หากพบข้อมูลและ status = 'รอจำหน่าย','ใช้งาน' สามารถจำหน่ายได้
+      snapshot.forEach((doc) => {
+        let item = doc.data();
+        sellItem(req, res, item);
+      });
+    }else{ // หากไม่พบข้อมูลหรือ status != 'รอจำหน่าย','ใช้งาน' ไม่สามารถจำหน่ายได้
+      reply(event.replyToken, { 
+        type: 'text', 
+        text: 'ไม่สามารถจำหน่ายได้ กรุณาตรวจสอบอีกครั้งค่ะ'
+      });
+    }
+  })
+  .catch(err =>{
+    console.log(err);
+  }); 
 }
 
 function decodeItem(code){

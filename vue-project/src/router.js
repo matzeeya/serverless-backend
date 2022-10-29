@@ -24,6 +24,7 @@ import ReturnItem from './views/User/ReturnItem.vue'
 
 import CheckItem from './views/Staff/CheckItem.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
+import AdmitItem from './views/Staff/AdmitItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
 import Movement from './views/Staff/Movement.vue'
 
@@ -130,6 +131,11 @@ const routes = [
     path: '/repairItem',
     name: 'RepairItem',
     component: RepairItem
+  },
+  {
+    path: '/admitItem',
+    name: 'AdmitItem',
+    component: AdmitItem
   },
   {
     path: '/sellItem',

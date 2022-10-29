@@ -49,11 +49,11 @@
       const docRef = firestore.collection('items');
         const query = docRef
           .where('item_code','==',this.code)
-          .where('status','==','ใช้งาน')
+          .where('status','in',['ชำรุด','ใช้งาน'])
         query
         .get()
         .then(snapshot =>{
-          if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ใช้งาน' สามารถแจ้งซ่อมได้
+          if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ชำรุด','ใช้งาน' สามารถแจ้งซ่อมได้
             snapshot.forEach((doc) => {
               Swal.fire({
                 title: 'เพิ่มรายการสำเร็จ',
@@ -61,23 +61,38 @@
                 icon: 'success'
               }).then((result) => {
                 if (result.isConfirmed) {
-                  this.isSuccessType = 'is-success'
-                  this.isSuccessMsg = 'เพิ่มรายการแจ้งซ่อมครุภัณฑ์: ' + doc.data().item_code
-                  localStorage.setItem('item:'+this.code, this.code);
-                  liff.closeWindow()
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'เพิ่มรายการแจ้งซ่อมเรียบร้อยแล้วค่ะ'
+                    }
+                  ]).then(() => {
+                    this.isSuccessType = 'is-success'
+                    this.isSuccessMsg = 'เพิ่มรายการแจ้งซ่อมครุภัณฑ์: ' + doc.data().item_code
+                    localStorage.setItem('item:'+this.code, this.code);
+                    liff.closeWindow()
+                  })
                 }
               })
             });
-          }else{ // หากไม่พบข้อมูลหรือ status != 'ใช้งาน' ไม่สามารถแจ้งซ่อมได้
+          }else{ // หากไม่พบข้อมูลหรือ status != 'ชำรุด','ใช้งาน' ไม่สามารถแจ้งซ่อมได้
             Swal.fire({
               title: 'ไม่สามารถเพิ่มข้อมูลได้',
               text: 'เนื่องจากไม่มีข้อมูลครุภัณฑ์: '+ this.code +' ในระบบค่ะ',
               icon: 'error'
             }).then((result) => {
               if (result.isConfirmed) {
-                this.isSuccessType = 'is-danger'
-                this.isSuccessMsg = 'ไม่สามารถเพิ่มรายการจำหน่ายครุภัณฑ์: ' + this.code +' ได้เนื่องจากไม่มีข้อมูลในระบบค่ะ'
-                liff.closeWindow()
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'ไม่สามารถเพิ่มรายการแจ้งซ่อมได้ค่ะ'
+                  }
+                ]).then(() => {
+                  this.isSuccessType = 'is-danger'
+                  this.isSuccessMsg = 'ไม่สามารถเพิ่มรายการแจ้งซ่อมครุภัณฑ์: ' + this.code +' ได้ กรุณาตรวจสอบสถานะครุภัณฑ์อีกครั้ง'
+                  liff.closeWindow()
+                })
+                
               }
             })
           }

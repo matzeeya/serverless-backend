@@ -11,7 +11,7 @@ const LINE_HEADER = {
   Authorization: `Bearer ${config.accessToken}`
 };
 
-function repairItem(req, res, doc) { 
+function admitItem(req, res, doc) { 
   let room = '';
   const event = req.body.events[0];
   const search = doc.room.search('ห้อง');
@@ -79,8 +79,8 @@ function repairItem(req, res, doc) {
               'type': 'button',
               'action': {
                 'type': 'uri',
-                'label': 'เพิ่มแจ้งซ่อมครุภัณฑ์',
-                'uri': `${config.LIFF_URL}/addRepairList/${doc.item_code}`,
+                'label': 'เพิ่มรายการ',
+                'uri': `${config.LIFF_URL}/addAdmitList/${doc.item_code}`,
               },
               'style': 'primary'
             },
@@ -89,7 +89,7 @@ function repairItem(req, res, doc) {
               'action': {
                 'type': 'uri',
                 'label': 'เสร็จสิ้น',
-                'uri': `${config.LIFF_URL}/repairList`
+                'uri': `${config.LIFF_URL}/admitList`
               },
               'style': 'secondary'
             }
@@ -125,7 +125,7 @@ function getdata(req, res, id) {
   // axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
   //   .then((doc) => {
   //     let item = doc.data[0];
-  //     repairItem(req, res, item);
+  //     returnItem(req, res, item);
   //   })
   //   .catch((err) => {
   //     reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
@@ -134,19 +134,19 @@ function getdata(req, res, id) {
   const docRef = firestore.collection('items');
   const query = docRef
     .where('item_code','==',code)
-    .where('status','in',['ชำรุด','ใช้งาน'])
+    .where('status','==','แจ้งซ่อม')
   query
   .get()
   .then(snapshot =>{
-    if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ชำรุด','ใช้งาน' สามารถแจ้งซ่อมได้
+    if(!snapshot.empty){ // หากพบข้อมูลและ status = 'แจ้งซ่อม' สามารถเพิ่มได้
       snapshot.forEach((doc) => {
         let item = doc.data();
-        repairItem(req, res, item);
+        admitItem(req, res, item);
       });
-    }else{ // หากไม่พบข้อมูลหรือ status != 'ชำรุด','ใช้งาน' ไม่สามารถแจ้งซ่อมได้
+    }else{ // หากไม่พบข้อมูลหรือ status != 'แจ้งซ่อม' ไม่สามารถเพิ่มได้
       reply(event.replyToken, { 
         type: 'text', 
-        text: 'ไม่สามารถแจ้งซ่อมได้ กรุณาตรวจสอบอีกครั้งค่ะ'
+        text: 'ไม่สามารถทำรายการได้ กรุณาตรวจสอบอีกครั้งค่ะ'
       });
     }
   })

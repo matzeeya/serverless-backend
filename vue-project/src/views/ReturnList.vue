@@ -237,9 +237,15 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                // localStorage.clear();
-                this.cancelHandler();
-                liff.closeWindow();
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'คืนเรียบร้อยแล้วค่ะ'
+                  }
+                ]).then(() => {
+                  this.cancelHandler();
+                  liff.closeWindow();
+                })
               }
             })
           })

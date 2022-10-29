@@ -177,7 +177,7 @@
                 liff.sendMessages([
                   {
                     'type' : 'text',
-                    'text' : 'เพิ่มรายการยืมเรียบร้อยแล้วค่ะ'
+                    'text' : 'ยืมเรียบร้อยแล้วค่ะ'
                   }
                 ]).then(() => {
                   this.cancelHandler();

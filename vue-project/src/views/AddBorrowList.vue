@@ -62,10 +62,17 @@
                 icon: 'success'
               }).then((result) => {
                 if (result.isConfirmed) {
-                  this.isSuccessType = 'is-success'
-                  this.isSuccessMsg = 'เพิ่มรายการยืมครุภัณฑ์: ' + doc.data().item_code
-                  localStorage.setItem('item:'+this.code, this.code);
-                  liff.closeWindow()
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'เพิ่มรายการยืมเรียบร้อยแล้วค่ะ'
+                    }
+                  ]).then(() => {
+                    this.isSuccessType = 'is-success'
+                    this.isSuccessMsg = 'เพิ่มรายการยืมครุภัณฑ์: ' + doc.data().item_code
+                    localStorage.setItem('item:'+this.code, this.code);
+                    liff.closeWindow()
+                  })
                 }
               })
             });
@@ -76,9 +83,16 @@
               icon: 'error'
             }).then((result) => {
               if (result.isConfirmed) {
-                this.isSuccessType = 'is-danger'
-                this.isSuccessMsg = 'ไม่สามารถเพิ่มรายการยืมครุภัณฑ์: ' + this.code +' ได้เนื่องจากไม่มีข้อมูลในระบบหรือไม่สามารถยืมได้ค่ะ'
-                liff.closeWindow()
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'ไม่สามารถเพิ่มรายการยืมได้ค่ะ'
+                  }
+                ]).then(() => {
+                  this.isSuccessType = 'is-danger'
+                  this.isSuccessMsg = 'ไม่สามารถเพิ่มรายการยืมครุภัณฑ์: ' + this.code +' ได้ กรุณาตรวจสอบสถานะครุภัณฑ์อีกครั้ง'
+                  liff.closeWindow()
+                })
               }
             })
           }

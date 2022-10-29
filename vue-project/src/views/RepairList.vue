@@ -134,7 +134,7 @@
           const docRef = firestore.collection('items');
           const query = docRef
             .where('item_code','==',this.items[i])
-            .where('status','==','ใช้งาน')
+            .where('status','in',['ชำรุด','ใช้งาน'])
           query
           .get()
           .then(snapshot =>{
@@ -147,7 +147,7 @@
             console.log(err);
           });
         }
-        this.addRepair(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการยืมที่ตาราง borrows
+        this.addRepair(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการแจ้งซ่อมที่ตาราง repairs
       },
       updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
         const item = firestore.collection('items');
@@ -170,8 +170,15 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                this.cancelHandler();
-                liff.closeWindow();
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'แจ้งซ่อมเรียบร้อยแล้วค่ะ'
+                  }
+                ]).then(() => {
+                  this.cancelHandler();
+                  liff.closeWindow();
+                })
               }
             })
           })
