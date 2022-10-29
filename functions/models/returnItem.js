@@ -12,8 +12,15 @@ const LINE_HEADER = {
 };
 
 function returnItem(req, res, doc) { 
+  let room = '';
   const event = req.body.events[0];
-  const encodeAsset = btoa(doc.item_code);
+  const search = doc.room.search('ห้อง');
+  if(search >= 0){
+    const splitRoom = doc.room.split('ห้อง ');
+    room = splitRoom[1];
+  }else{
+    room = doc.room;
+  }
   reply(event.replyToken, { 
       type: 'flex',
       altText: 'ไม่รองรับการแสดงผลบนอุปกรณ์นี้',
@@ -60,7 +67,7 @@ function returnItem(req, res, doc) {
             },
             {
               'type': 'text',
-              'text': 'สถานที่จัดเก็บ: ' + doc.room
+              'text': 'สถานที่จัดเก็บ: ' + room
             }
           ]
         },
@@ -71,9 +78,9 @@ function returnItem(req, res, doc) {
             {
               'type': 'button',
               'action': {
-                'type': 'message',
-                'label': 'ถูกต้อง',
-                'text': 'บันทึกข้อมูลสำเร็จ'
+                'type': 'uri',
+                'label': 'เพิ่มรายการคืน',
+                'uri': `${config.LIFF_URL}/addReturnList/${doc.item_code}`,
               },
               'style': 'primary'
             },
@@ -81,8 +88,8 @@ function returnItem(req, res, doc) {
               'type': 'button',
               'action': {
                 'type': 'uri',
-                'label': 'แก้ไข',
-                'uri': `${config.LIFF_URL}/editItem?code=${encodeAsset}`
+                'label': 'เสร็จสิ้น',
+                'uri': `${config.LIFF_URL}/returnList`
               },
               'style': 'secondary'
             }
@@ -105,15 +112,39 @@ const reply = (replyToken, payload) => {
   })
 };
 
-function getdata(req, res, id){
-  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + id)
-    .then(doc => {
+function getdata(req, res, id) {
+  let event = req.body.events[0];
+  let code;
+  const decode = id.search('eng');
+  if(decode >= 0){
+    code = decodeItem(id);
+    console.log('decode '+code);
+  }else{
+    code = id;
+  }
+  axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
+    .then((doc) => {
       let item = doc.data[0];
       returnItem(req, res, item);
     })
-    .catch(err => {
+    .catch((err) => {
+      reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
       console.log(err);
-    })
+    });
+}
+
+function decodeItem(code){
+  let arr1= ['eng','m','com','ee','off','edu'];
+  let arr2= ['วศ.','ว.','คต. ','ฟฟ. ','สนง. ','กศ. '];
+
+  for(let i=0; i<arr1.length; i++){
+    code = code.replace(arr1[i],arr2[i]);
+  }
+  code = code.replaceAll('-','');
+  let str = code.split(' ');
+  let year = str[1].substring(str[1].length - 4); //ตัดปีงบประมาณ
+  code = code.replace(year,'/'+year);
+  return code;
 }
 
 module.exports={ getdata };

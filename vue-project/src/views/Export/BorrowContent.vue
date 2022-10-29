@@ -79,39 +79,6 @@ export default {
         }
       })
 
-      // ct.push({
-      //   columns: [
-      //     { text: 'ข้าพเจ้า ชื่อ ', fontSize: 16 },
-      //     { text: 'มัทรียา', fontSize: 16,
-      //       decoration: 'underline', 
-      //       decorationStyle: 'dotted' },
-      //     { text: 'นามสกุล ', fontSize: 16 },
-      //     { text: 'ราชบัวศรี', fontSize: 16,
-      //       decoration: 'underline', 
-      //       decorationStyle: 'dotted' }
-      //   ]
-      // })
-
-      // ct.push({
-      //   columns: [
-      //     { text: 'ตำแหน่ง ', fontSize: 16 },
-      //     { text: '[ ] อาจารย์/บุคลากร สังกัดหน่วยงาน ', fontSize: 16 }
-      //   ]
-      // })
-
-      // ct.push({
-      //   columns: [
-      //     { text: '[ ] นิสิต รหัสประจำตัวนิสิต ', fontSize: 16 },
-      //     { text: '65074519', fontSize: 16,
-      //       decoration: 'underline', 
-      //       decorationStyle: 'dotted' },
-      //     { text: 'ภาควิชา ', fontSize: 16 },
-      //     { text: 'วิศวกรรมไฟฟ้าและคอมพิวเตอร์, คณะวิศวกรรมศาสตร์', fontSize: 16,
-      //       decoration: 'underline', 
-      //       decorationStyle: 'dotted' }
-      //   ]
-      // })
-
       return ct;
     },
     getDate(){

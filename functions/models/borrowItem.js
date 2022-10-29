@@ -79,7 +79,7 @@ function borrowItem(req, res, doc) {
               type: 'button',
               action: {
                 type: 'uri',
-                label: 'เพิ่มรายการยืมครุภัณฑ์',
+                label: 'เพิ่มรายการยืม',
                 uri: `${config.LIFF_URL}/addBorrowList/${doc.item_code}`,
               },
               style: 'primary',
