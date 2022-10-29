@@ -15,10 +15,10 @@ function borrowItem(req, res, doc) {
   let room = '';
   const event = req.body.events[0];
   const search = doc.room.search('ห้อง');
-  if(search >= 0){
+  if (search >= 0) {
     const splitRoom = doc.room.split('ห้อง ');
     room = splitRoom[1];
-  }else{
+  } else {
     room = doc.room;
   }
   reply(event.replyToken, {
@@ -113,13 +113,13 @@ const reply = (replyToken, payload) => {
 };
 
 function getdata(req, res, id) {
-  let event = req.body.events[0];
+  const event = req.body.events[0];
   let code;
   const decode = id.search('eng');
-  if(decode >= 0){
+  if (decode >= 0) {
     code = decodeItem(id);
     // console.log('decode '+code);
-  }else{
+  } else {
     code = id;
   }
   // axios.get('https://tools.ecpe.nu.ac.th/inventory/api/item/' + code)
@@ -133,39 +133,39 @@ function getdata(req, res, id) {
   //   });
   const docRef = firestore.collection('items');
   const query = docRef
-    .where('item_code','==',code)
-    .where('status','==','ใช้งาน')
+    .where('item_code', '==', code)
+    .where('status', '==', 'ใช้งาน');
   query
   .get()
-  .then(snapshot =>{
-    if(!snapshot.empty){ // หากพบข้อมูลและ status = 'ใช้งาน' สามารถยืมได้
+  .then((snapshot) =>{
+    if (!snapshot.empty) { // หากพบข้อมูลและ status = 'ใช้งาน' สามารถยืมได้
       snapshot.forEach((doc) => {
-        let item = doc.data();
+        const item = doc.data();
         borrowItem(req, res, item);
       });
-    }else{ // หากไม่พบข้อมูลหรือ status != 'ใช้งาน' ไม่สามารถยืมได้
-      reply(event.replyToken, { 
-        type: 'text', 
-        text: 'ไม่สามารถยืมได้ กรุณาตรวจสอบอีกครั้งค่ะ'
+    } else { // หากไม่พบข้อมูลหรือ status != 'ใช้งาน' ไม่สามารถยืมได้
+      reply(event.replyToken, {
+        type: 'text',
+        text: 'ไม่สามารถยืมได้ กรุณาตรวจสอบอีกครั้งค่ะ',
       });
     }
   })
-  .catch(err =>{
+  .catch((err) =>{
     console.log(err);
-  }); 
+  });
 }
 
-function decodeItem(code){
-  let arr1= ['eng','m','com','ee','off','edu'];
-  let arr2= ['วศ.','ว.','คต. ','ฟฟ. ','สนง. ','กศ. '];
+function decodeItem(code) {
+  const arr1= ['eng', 'm', 'com', 'ee', 'off', 'edu'];
+  const arr2= ['วศ.', 'ว.', 'คต. ', 'ฟฟ. ', 'สนง. ', 'กศ. '];
 
-  for(let i=0; i<arr1.length; i++){
-    code = code.replace(arr1[i],arr2[i]);
+  for (let i=0; i<arr1.length; i++) {
+    code = code.replace(arr1[i], arr2[i]);
   }
-  code = code.replaceAll('-','');
-  let str = code.split(' ');
-  let year = str[1].substring(str[1].length - 4); //ตัดปีงบประมาณ
-  code = code.replace(year,'/'+year);
+  code = code.replaceAll('-', '');
+  const str = code.split(' ');
+  const year = str[1].substring(str[1].length - 4); // ตัดปีงบประมาณ
+  code = code.replace(year, '/'+year);
   return code;
 }
 
