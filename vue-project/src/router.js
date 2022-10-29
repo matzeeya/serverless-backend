@@ -32,6 +32,7 @@ import Verify from './views/Admin/UserVerify.vue'
 import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
 
+import ViewBorrowReport from './views/Export/ViewBorrowReport.vue'
 import ExportPDF from './views/Export/BorrowContent.vue'
 
 Vue.use(VueRouter)
@@ -166,6 +167,11 @@ const routes = [
     path: '/searchItem',
     name: 'SearchItem',
     component: SearchItem
+  },
+  {
+    path: '/viewBorrowReport',
+    name: 'ViewBorrowReport',
+    component: ViewBorrowReport
   },
   {
     path: '/exportPdf',

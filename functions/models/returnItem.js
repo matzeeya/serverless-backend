@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 // เชื่อมต่อ firebase
-// const firestore = require('../../firebase-config/node/firebase');
+const firestore = require('../../firebase-config/node/firebase');
 const config = require('../config');
 
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
@@ -131,6 +131,7 @@ function getdata(req, res, id) {
   //     reply(event.replyToken, { type: 'text', text: 'ไม่พบข้อมูลครุภัณฑ์'});
   //     console.log(err);
   //   });
+  // console.log(code);
   const docRef = firestore.collection('items');
   const query = docRef
     .where('item_code', '==', code)

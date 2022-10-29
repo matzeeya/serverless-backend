@@ -93,14 +93,14 @@
               // console.log("borrow: "+ doc.id);
               Swal.fire({
                 title: 'เพิ่มรายการสำเร็จ',
-                text: 'เพิ่มรายการครุภัณฑ์: '+ doc.data().item_code +' เรียบร้อยแล้วค่ะ',
+                text: 'เพิ่มรายการครุภัณฑ์: '+ this.code +' เรียบร้อยแล้วค่ะ',
                 icon: 'success'
               }).then((result) => {
                 if (result.isConfirmed) {
                   liff.sendMessages([
                     {
                       'type' : 'text',
-                      'text' : 'สำเร็จ'
+                      'text' : 'เพิ่มรายการเรียบร้อยแล้วค่ะ'
                     }
                   ]).then(() => {
                     this.isSuccessType = 'is-success'
