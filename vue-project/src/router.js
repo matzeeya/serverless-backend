@@ -32,8 +32,17 @@ import Verify from './views/Admin/UserVerify.vue'
 import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
 
-import ViewBorrowReport from './views/Export/ViewBorrowReport.vue'
-import ExportPDF from './views/Export/BorrowContent.vue'
+import ViewBorrowReport from './views/Report/ViewBorrowReport.vue'
+import ViewReturnReport from './views/Report/ViewReturnReport.vue'
+import ViewRepairReport from './views/Report/ViewRepairReport.vue'
+import ViewAdmitReport from './views/Report/ViewAdmitReport.vue'
+import ViewSellReport from './views/Report/ViewSellReport.vue'
+
+import ExportBorrow from './views/Export/BorrowContent.vue'
+import ExportReturn from './views/Export/ExportReturn.vue'
+import ExportRepair from './views/Export/ExportRepair.vue'
+import ExportAdmit from './views/Export/ExportAdmit.vue'
+import ExportSell from './views/Export/ExportSell.vue'
 
 Vue.use(VueRouter)
 
@@ -174,9 +183,49 @@ const routes = [
     component: ViewBorrowReport
   },
   {
-    path: '/exportPdf',
-    name: 'ExportPDF',
-    component: ExportPDF
+    path: '/viewReturnReport',
+    name: 'ViewReturnReport',
+    component: ViewReturnReport
+  },
+  {
+    path: '/viewRepairReport',
+    name: 'ViewRepairReport',
+    component: ViewRepairReport
+  },
+  {
+    path: '/viewAdmitReport',
+    name: 'ViewAdmitReport',
+    component: ViewAdmitReport
+  },
+  {
+    path: '/viewSellReport',
+    name: 'ViewSellReport',
+    component: ViewSellReport
+  },
+  {
+    path: '/exportBorrow',
+    name: 'ExportBorrow',
+    component: ExportBorrow
+  },
+  {
+    path: '/exportReturn',
+    name: 'ExportReturn',
+    component: ExportReturn
+  },
+  {
+    path: '/exportRepair',
+    name: 'ExportRepair',
+    component: ExportRepair
+  },
+  {
+    path: '/exportAdmit',
+    name: 'ExportAdmit',
+    component: ExportAdmit
+  },
+  {
+    path: '/exportSell',
+    name: 'ExportSell',
+    component: ExportSell
   }
 ]
 
