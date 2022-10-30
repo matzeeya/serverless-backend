@@ -84,15 +84,15 @@ function sellItem(req, res, doc) {
               },
               style: 'primary',
             },
-            {
-              type: 'button',
-              action: {
-                type: 'uri',
-                label: 'เสร็จสิ้น',
-                uri: `${config.LIFF_URL}/sellList`,
-              },
-              style: 'secondary',
-            },
+            // {
+            //   type: 'button',
+            //   action: {
+            //     type: 'uri',
+            //     label: 'เสร็จสิ้น',
+            //     uri: `${config.LIFF_URL}/sellList`,
+            //   },
+            //   style: 'secondary',
+            // },
           ],
         },
       },

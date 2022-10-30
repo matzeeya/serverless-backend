@@ -100,7 +100,7 @@
                   liff.sendMessages([
                     {
                       'type' : 'text',
-                      'text' : 'เพิ่มรายการคินเรียบร้อยแล้วค่ะ'
+                      'text' : 'เพิ่มรายการคืนเรียบร้อยแล้วค่ะ'
                     }
                   ]).then(() => {
                     this.isSuccessType = 'is-success'
