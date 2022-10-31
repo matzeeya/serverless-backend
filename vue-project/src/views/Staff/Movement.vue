@@ -120,7 +120,7 @@
         this.item.room_db = this.item.room; // room in inventory or db
         this.item.room_old = this.room_old; //old room
         this.item.create_by = this.userProfile;
-        this.item.created_at = new Date().toLocaleString();
+        this.item.created_at = new Date();
         this.addItem(this.item);
         
         //Add data to table movement
@@ -129,7 +129,7 @@
           room_new: this.room_at,
           item_code: this.item_code,
           update_by: this.userProfile,
-          created_at: new Date().toLocaleString()
+          created_at: new Date()
         };
         this.addMovement(obj);
       }

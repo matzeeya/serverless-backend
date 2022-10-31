@@ -79,7 +79,7 @@
         this.item.room_db = this.room_db;
         this.item.room_old = this.room_old;
         this.item.create_by = this.userProfile;
-        this.item.created_at = new Date().toLocaleString();
+        this.item.created_at = new Date();
 
         this.chkItem(this.item);        
       },

@@ -180,7 +180,7 @@
         if(this.items.length > 0){
           let obj = {
             created_by:this.userProfile,
-            created_at: new Date().toLocaleString()
+            created_at: new Date()
           };
 
           let item = []

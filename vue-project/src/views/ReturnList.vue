@@ -256,7 +256,7 @@
           let obj = {
             return_by:this.userProfile,
             note: this.note,
-            created_at: new Date().toLocaleString()
+            created_at: new Date()
           };
 
           let item = []
