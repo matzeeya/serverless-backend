@@ -1,23 +1,37 @@
 <template>
-  <section>
-    <b-table
-      :datas="isEmpty ? [] : datas"
-      :mobile-cards="hasMobileCards">
-
-      <b-table-column field="item_code" label="หมายเลขครุภัณฑ์" :td-attrs="columnTdAttrs" v-slot="props">
-        {{ props.row.item_code }}
-      </b-table-column>
-
-      <b-table-column field="room" label="สถานที่เก็บ" :td-attrs="columnTdAttrs" v-slot="props">
-        {{ props.row.room }}
-      </b-table-column>
-
-      <template #empty>
-        <div class="has-text-centered">No records</div>
-      </template>
-    </b-table>
-    <button @click='onExport' >Export</button> 
-  </section>
+  <div class='container-fluid'>
+    <button
+      class='button is-success' 
+      type='button' 
+      @click='onExport'>
+      Export File
+    </button>
+    <table id='tblExport' class='table table-striped'>
+      <thead>
+         <tr>
+          <td colspan='5' style='text-align:center'>
+            <b>รายการครุภัณฑ์ที่จำหน่ายประจำปีงบประมาณ {{ thisYear }}</b>
+          </td>
+        </tr>
+        <tr>
+          <th scope='col'>ลำดับ</th>
+          <th scope='col'>รายการ</th>
+          <th scope='col'>จำนวน/หน่วย</th>
+          <th scope='col'>หมายเลขครุภัณฑ์</th>
+          <th scope='col'>สถานที่เก็บ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for='data,index in datas' :key='index'>
+          <th scope='row'>{{ index + 1 }}</th>
+          <td>{{ data.name }}</td>
+          <td>{{ data.unit }}</td>
+          <td>{{ data.item_code }}</td>
+          <td>{{ data.room }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -31,14 +45,48 @@ export default {
   data(){
     return {
       datas: [],
-      // data:[
-      //   {'item_code':'7450-010-13406','room':'EE106'},
-      //   {'item_code':'7450-010-13407','room':'EE113'},
-      // ],
       isEmpty: false,
       hasMobileCards: true,
       userProfile:null,
+      thisYear: new Date().getFullYear() + 543
     }
+  },
+  created(){
+    let year = new Date().getFullYear(); //.toLocaleString();
+    let start = new Date(year, 0, 1); // year, month 0 (jan), date 1
+    let end = new Date(year, 12, 31); // year, month 12 (dec), date 31
+    
+    let obj = [];
+    let arr = [];
+    const docRef = firestore.collection('borrows');
+    const query = docRef
+      .where('created_at','>=',start)
+      .where('created_at','<=',end)
+    query
+    .get()
+    .then(snapshot =>{
+      let index=1;
+      snapshot.forEach((doc) => {
+        for(let i=0; i < doc.data().items.length; i++){
+          let data = doc.data().items[i];
+          this.itemName(data.item_code, function(res) {
+            obj = {
+              'id': index,
+              'name': res.name,
+              'unit': res.unit,
+              'item_code': data.item_code,
+              'room': data.room,
+            }
+            arr.push(obj);
+            index++;
+          });
+        }
+        this.datas = arr;
+      });
+    })
+    .catch(err =>{
+      console.log(err);
+    });
   },
   mounted(){
     const liff = this.$liff
@@ -62,45 +110,30 @@ export default {
       console.error('Error initialize LIFF: ', err);
     });
   },
-  beforeMount() {
-    let year = new Date().getFullYear(); //.toLocaleString();
-    let start = new Date(year, 0, 1); // year, month 0 (jan), date 1
-    let end = new Date(year, 12, 31); // year, month 12 (dec), date 31
-
-    let obj = [];
-
-    const docRef = firestore.collection('borrows');
-    const query = docRef
-      .where('created_at','>=',start)
-      .where('created_at','<=',end)
-    query
-    .get()
-    .then(snapshot =>{
-      snapshot.forEach((doc) => {
-        // console.log(doc.id)
-        for(let i=0; i < doc.data().items.length; i++){ // loop จำนวนรายการยืมใน field items
-          obj = {
-            'item_code':doc.data().items[i].item_code,
-            'room':doc.data().items[i].room,
-          }
-          this.datas.push(obj);
-        }
-      });
-      // console.log('data',this.data);
-      console.log('datas',this.datas);
-    })
-    .catch(err =>{
-      console.log(err);
-    });
-  },
   methods: {
     onExport() { // เมื่อกดปุ่มจะทำการสร้างไฟล์ xcel ด้วย xlsx
-      const dataWS = utils.json_to_sheet(this.datas);
-      const wb = utils.book_new();
-      utils.book_append_sheet(wb, dataWS);
-
-      writeFileXLSX(wb,'รายการจำหน่าย.xlsx');
+      const elt = document.getElementById('tblExport');
+      const dataWS = utils.table_to_book(elt,{sheet: 'ส่งพี่บ๊วย'});
+      writeFileXLSX(dataWS,'รายการจำหน่าย '+ this.thisYear +'.xlsx');
     },
+    itemName(id, callback){
+      const docRef = firestore.collection('items');
+      const query = docRef
+        .where('item_code','==',id)
+      query
+      .get()
+      .then(snapshot =>{
+         snapshot.forEach((doc) => {
+          callback({
+            name: doc.data().name, 
+            unit: doc.data().unit
+          })
+        });
+      })
+      .catch(err =>{
+        console.log(err);
+      });
+    }
   }
 }
 </script>
