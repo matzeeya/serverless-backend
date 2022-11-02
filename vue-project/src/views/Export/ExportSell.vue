@@ -45,8 +45,6 @@ export default {
   data(){
     return {
       datas: [],
-      isEmpty: false,
-      hasMobileCards: true,
       userProfile:null,
       thisYear: new Date().getFullYear() + 543
     }
@@ -58,7 +56,7 @@ export default {
     
     let obj = [];
     let arr = [];
-    const docRef = firestore.collection('borrows');
+    const docRef = firestore.collection('sells');
     const query = docRef
       .where('created_at','>=',start)
       .where('created_at','<=',end)

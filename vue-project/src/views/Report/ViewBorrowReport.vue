@@ -1,47 +1,33 @@
 <template>
-  <div>
-    <!-- <form @submit.prevent='submitHandler'>
+  <div class='container-fluid'>
+    <form @submit.prevent='submitHandler'>
+      <button
+        class='button is-success' 
+        type='submit'>
+        Export PDF
+      </button>
       <table class='table table-striped'>
         <thead>
           <tr>
-            <th scope='col'>ลำดับที่</th>
+            <th scope='col'>ลำดับ</th>
+            <th scope='col'>รายการ</th>
             <th scope='col'>หมายเลขครุภัณฑ์</th>
+            <th scope='col'>S/N</th>
+            <th scope='col'>สถานที่เก็บ</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for='item,index in items' :key='index'>
+          <tr v-for='data,index in datas' :key='index'>
             <th scope='row'>{{ index + 1 }}</th>
-            <td>{{ item }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.item_code }}</td>
+            <td>{{ data.serial }}</td>
+            <td>{{ data.room }}</td>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan='3'>
-              <button class='button is-success' type='submit'>Export PDF</button>
-            </td>
-          </tr>
-        </tfoot>
       </table>
-    </form> -->
+    </form>
   </div>
-  <!-- <section>
-    <b-table
-      :data="isEmpty ? [] : data"
-      :mobile-cards="hasMobileCards">
-
-      <b-table-column field="id" label="ลำดับที่" width="40" :td-attrs="columnTdAttrs" numeric v-slot="props">
-        {{ props.row.id }}
-      </b-table-column>
-
-      <b-table-column field="item_code" label="หมายเลขครุภัณฑ์" :td-attrs="columnTdAttrs" v-slot="props">
-        {{ props.row.item_code }}
-      </b-table-column>
-
-      <template #empty>
-        <div class="has-text-centered">No records</div>
-      </template>
-    </b-table>
-  </section> -->
 </template>
 <script>
   import firestore from '../../../../firebase-config/vue/firebase';
@@ -50,18 +36,10 @@
 
   export default {
     data() {
-      // const items = [
-      //     { 'id': 1, 'item_code': '7450-010-13391' },
-      //     { 'id': 2, 'item_code': '7450-010-13392' },
-      //     { 'id': 3, 'item_code': '7450-010-13393' },
-      //     { 'id': 4, 'item_code': '7450-010-13394' },
-      //     { 'id': 5, 'item_code': '7450-010-13395' },
-      // ]
       return {
         userProfile: null,
-        items:[],
-        // isEmpty: false,
-        // hasMobileCards: true
+        datas:[],
+        dateNow: new Date()
       }
     },
     mounted(){
@@ -86,52 +64,61 @@
         console.error('Error initialize LIFF: ', err);
       });
     },
-    methods : {
-      queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
-        for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
-          const docRef = firestore.collection('items');
-          const query = docRef
-            .where('item_code','==',this.items[i])
-            .where('status','==','ใช้งาน')
-          query
-          .get()
-          .then(snapshot =>{
-            snapshot.forEach((doc) => {
-              console.log(doc.id);
-            });
-          })
-          .catch(err =>{
-            console.log(err);
+    created(){
+    console.log(this.dateNow) 
+    let obj = [];
+    let arr = [];
+    const docRef = firestore.collection('borrows');
+    const query = docRef
+      .where('created_at','==',this.dateNow)
+      .where('borrow_by','==',this.userProfile)
+    query
+    .get()
+    .then(snapshot =>{
+      let index=1;
+      snapshot.forEach((doc) => {
+        for(let i=0; i < doc.data().items.length; i++){
+          let data = doc.data().items[i];
+          this.itemName(data.item_code, function(res) {
+            obj = {
+              'id': index,
+              'name': res.name,
+              'item_code': data.item_code,
+              'serial': res.serial,
+              'room': data.room,
+            }
+            arr.push(obj);
+            index++;
           });
         }
+        this.datas = arr;
+      });
+    })
+    .catch(err =>{
+      console.log(err);
+    });
+  },
+    methods : {
+      itemName(id, callback){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
+        const docRef = firestore.collection('items');
+        const query = docRef
+          .where('item_code','==',id)
+        query
+        .get()
+        .then(snapshot =>{
+          snapshot.forEach((doc) => {
+            callback({
+              name: doc.data().name, 
+              serial: doc.data().serial
+            })
+          });
+        })
+        .catch(err =>{
+          console.log(err);
+        });
       },
       async submitHandler(){
         console.log(this.userProfile);
-        // if(this.items.length > 0){
-        //   let obj = {
-        //     borrow_by:this.userProfile,
-        //     reason: this.reason,
-        //     created_at: new Date()
-        //   };
-
-        //   let item = []
-        //   for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการยืมลงใน data สำหรับไว้ add data ลงตาราง borrows
-        //     item[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
-        //   }
-
-        //   obj['items'] = item
-        //   this.queryDoc(obj);
-        // }else{
-        //   Swal.fire({
-        //     title: 'ผิดพลาด',
-        //     text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
-        //     icon: 'error'
-        //   }).then((result) => {
-        //     if (result.isConfirmed) {
-        //       liff.closeWindow()
-        //     }
-        //   })
-        // }
       }
     }
   }
