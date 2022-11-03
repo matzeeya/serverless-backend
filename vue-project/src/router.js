@@ -32,13 +32,13 @@ import Verify from './views/Admin/UserVerify.vue'
 import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
 
-import ViewBorrowReport from './views/Report/ViewBorrowReport.vue'
-import ViewReturnReport from './views/Report/ViewReturnReport.vue'
-import ViewRepairReport from './views/Report/ViewRepairReport.vue'
-import ViewAdmitReport from './views/Report/ViewAdmitReport.vue'
-import ViewSellReport from './views/Report/ViewSellReport.vue'
+import ViewBorrowList from './views/Report/ViewBorrowList.vue'
+import ViewReturnList from './views/Report/ViewReturnList.vue'
+import ViewRepairList from './views/Report/ViewRepairList.vue'
+import ViewAdmitList from './views/Report/ViewAdmitList.vue'
+import ViewSellList from './views/Report/ViewSellList.vue'
 
-import ExportBorrow from './views/Export/BorrowContent.vue'
+import ExportBorrow from './views/Export/ExportBorrow.vue'
 import ExportReturn from './views/Export/ExportReturn.vue'
 import ExportRepair from './views/Export/ExportRepair.vue'
 import ExportAdmit from './views/Export/ExportAdmit.vue'
@@ -178,29 +178,29 @@ const routes = [
     component: SearchItem
   },
   {
-    path: '/viewBorrowReport',
-    name: 'ViewBorrowReport',
-    component: ViewBorrowReport
+    path: '/viewBorrowList',
+    name: 'ViewBorrowList',
+    component: ViewBorrowList
   },
   {
-    path: '/viewReturnReport',
-    name: 'ViewReturnReport',
-    component: ViewReturnReport
+    path: '/viewReturnList',
+    name: 'ViewReturnList',
+    component: ViewReturnList
   },
   {
-    path: '/viewRepairReport',
-    name: 'ViewRepairReport',
-    component: ViewRepairReport
+    path: '/viewRepairList',
+    name: 'ViewRepairList',
+    component: ViewRepairList
   },
   {
-    path: '/viewAdmitReport',
-    name: 'ViewAdmitReport',
-    component: ViewAdmitReport
+    path: '/viewAdmitList',
+    name: 'ViewAdmitList',
+    component: ViewAdmitList
   },
   {
-    path: '/viewSellReport',
-    name: 'ViewSellReport',
-    component: ViewSellReport
+    path: '/viewSellList',
+    name: 'ViewSellList',
+    component: ViewSellList
   },
   {
     path: '/exportBorrow',

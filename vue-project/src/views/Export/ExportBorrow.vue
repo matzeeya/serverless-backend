@@ -7,11 +7,6 @@ import pdfMake from 'pdfmake'
 import pdfFonts from './../../assets/Thaifonts.js'
 
 export default {
-  data() {
-    return {
-      dates: null
-    }
-  },
   mounted() {
     this.exportPDF()
   },
@@ -54,36 +49,46 @@ export default {
 
       ct.push({
         // absolutePosition: { x: 50, y: 150},
-        text: 'วันที่ ' + this.getDate(),
+        text: 'วันที่ ',
         fontSize: 16
       })
       ct.push(' ')
       
-      ct.push({
-        layout: 'lightHorizontalLines', // optional
-        table: {
-          headerRows: 1,
-          widths: [ 50, '*', 50, '*' ],
-
-          body: [
-            [ { text: 'ข้าพเจ้า ชื่อ ', fontSize: 16 }, 
-            { text: 'มัทรียา', fontSize: 16,
-              decoration: 'underline', 
-              decorationStyle: 'dotted' }, 
-            { text: 'นามสกุล ', fontSize: 16 }, 
-            { text: 'ราชบัวศรี', fontSize: 16,
-            decoration: 'underline', 
-            decorationStyle: 'dotted' }
+      this.userData((res) => {
+        ct.push({
+          layout: 'lightHorizontalLines', // optional
+          table: {
+            headerRows: 1,
+            widths: [ 50, '*', 50, '*' ],
+            body: [
+              [ 
+                { text: 'ข้าพเจ้า ชื่อ ', fontSize: 16 }, 
+                { text: res.fname, fontSize: 16,
+                  decoration: 'underline', 
+                  decorationStyle: 'dotted' }, 
+                { text: 'นามสกุล ', fontSize: 16 }, 
+                { text: res.lname, fontSize: 16,
+                decoration: 'underline', 
+                decorationStyle: 'dotted' }
+              ]
             ]
-          ]
-        }
+          }
+        })
       })
+      
 
       return ct;
     },
-    getDate(){
-      let dates = '3 เดือน พฤศจิกายน พ.ศ.2565'
-      return dates;
+    userData(callback){
+      let data = JSON.parse(localStorage.getItem('userData'));
+      callback(data)
+    },
+    borrowList(callback){
+      let data = JSON.parse(localStorage.getItem('borrowList'));
+      callback(data)
+      // data.forEach((doc) => {
+      //   console.log('doc ',doc);
+      // });
     }
 	}
 }

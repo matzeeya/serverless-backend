@@ -1,4 +1,19 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionId": "borrows",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "borrow_by",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "mode": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
