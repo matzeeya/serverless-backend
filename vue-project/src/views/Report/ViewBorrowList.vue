@@ -96,6 +96,7 @@
                   obj = {
                     'id': index,
                     'name': res.name,
+                    'brand': res.brand,
                     'item_code': data.item_code,
                     'serial': res.serial,
                     'room': data.room,
@@ -124,7 +125,8 @@
           snapshot.forEach((doc) => {
             callback({
               name: doc.data().name, 
-              serial: doc.data().serial
+              serial: doc.data().serial,
+              brand: doc.data().brand
             })
           });
         })
@@ -152,6 +154,7 @@
               'fname': doc.data().fname, 
               'lname': doc.data().lname,
               'usertype': doc.data().usertype,
+              'stuid': doc.data().stuid,
               'faculty': 'วิศวกรรมศาสตร์',
               'department': 'ภาควิชาวิศวกรรมไฟฟ้าและคอมพิวเตอร์',
               'reason': this.datas.reason,

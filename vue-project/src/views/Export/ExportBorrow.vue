@@ -47,26 +47,27 @@ export default {
       })
       ct.push(' ')
 
-      ct.push({
-        // absolutePosition: { x: 50, y: 150},
-        text: 'วันที่ ',
-        fontSize: 16
-      })
-      ct.push(' ')
-      
       this.userData((res) => {
         ct.push({
-          layout: 'lightHorizontalLines', // optional
+          text: 'วันที่ ' + res.date,
+          fontSize: 16,
+          bold: true
+        })
+        ct.push({
+          layout: 'noBorders',
           table: {
-            headerRows: 1,
-            widths: [ 50, '*', 50, '*' ],
+            widths: [ 70, '*', 50, '*' ],
             body: [
               [ 
-                { text: 'ข้าพเจ้า ชื่อ ', fontSize: 16 }, 
+                { text: 'ข้าพเจ้า ชื่อ ', 
+                  fontSize: 16 ,
+                  bold: true}, 
                 { text: res.fname, fontSize: 16,
                   decoration: 'underline', 
                   decorationStyle: 'dotted' }, 
-                { text: 'นามสกุล ', fontSize: 16 }, 
+                { text: 'นามสกุล ', 
+                  fontSize: 16,
+                  bold: true }, 
                 { text: res.lname, fontSize: 16,
                 decoration: 'underline', 
                 decorationStyle: 'dotted' }
@@ -75,7 +76,265 @@ export default {
           }
         })
       })
+
+      this.userData((res) => {
+        if(res.usertype === 'นักศึกษา'){
+          ct.push({
+            layout: 'noBorders',
+            table: {
+              widths: [ 70, '*', 50, '*' ],
+              body: [
+                [
+                  { text: 'ตำแหน่ง ', 
+                    fontSize: 16,
+                    bold: true },
+                  { text: '[ ] อาจารย์ / บุคลากร สังกัดหน่วยงาน ', fontSize: 16 },
+                  { text:  ' ', colSpan:2, fontSize: 16}
+                ],
+                [
+                  { text: ' '},
+                  { text: '[*] นิสิต รหัสประจำตัวนิสิต ' + res.stuid, fontSize: 16 },
+                  { text: res.department + ' ,' + res.faculty, 
+                    fontSize: 16, colSpan:2,
+                    decoration: 'underline', 
+                    decorationStyle: 'dotted' }
+                ]
+              ]
+            }
+          })
+        }else{
+          ct.push({
+            layout: 'noBorders',
+            table: {
+              widths: [ 70, '*', 50, '*' ],
+              body: [
+                [
+                  { text: 'ตำแหน่ง ', 
+                    fontSize: 16,
+                    bold: true },
+                  { text: '[*] อาจารย์ / บุคลากร สังกัดหน่วยงาน ', fontSize: 16 },
+                  { text:  res.department + ' ,' + res.faculty,
+                    colSpan:2, fontSize: 16,
+                    decoration: 'underline', 
+                    decorationStyle: 'dotted' }
+                ],
+                [
+                  { text: ' '},
+                  { text: '[ ] นิสิต รหัสประจำตัวนิสิต', fontSize: 16 },
+                  { text: 'ภาควิชา ', fontSize: 16, colSpan:2}
+                ]
+              ]
+            }
+          })
+        }
+      })
       
+      this.userData((res) => {
+        ct.push({
+          layout: 'noBorders',
+          table: {
+            widths: [ 70, '*', 50, '*' ],
+            body: [
+              [
+                { text: ' '},
+                { text: 'มีความประสงค์จะขอยืมวัสดุ หรือ ครุภัณฑ์ ของคณะวิศวกรรมศาสตร์ มหาวิทยาลัยนเรศวร เพื่อ', 
+                  colSpan:3, fontSize: 16 },
+              ],
+              [
+                { text: res.reason, fontSize: 16,
+                  colSpan:4,
+                  decoration: 'underline', 
+                  decorationStyle: 'dotted' }
+              ]
+            ]
+          }
+        })
+      })
+      
+      ct.push('')
+      this.borrowList((res) => {
+        res.forEach((doc) => {
+          ct.push({
+            columns: [
+              {
+                width: 75,
+                text: 'รายการที่ '+ doc.id,
+                fontSize: 16 , 
+                bold: true
+              },
+              {
+                width: 280,
+                text: ' ชื่อ' + doc.name,
+                fontSize: 16 , 
+                decoration: 'underline', 
+                decorationStyle: 'dotted'
+              },
+              {
+                width: 30,
+                text: 'ยี่ห้อ ',
+                fontSize: 16, 
+                bold: true
+              },
+              {
+                width: 100,
+                text: doc.brand,
+                fontSize: 16 , 
+                decoration: 'underline', 
+                decorationStyle: 'dotted'
+              }
+            ]
+          })
+
+          ct.push({
+            columns: [
+              {
+                width: 20,
+                text: 'S/N ',
+                fontSize: 16, 
+                bold: true
+              },
+              {
+                width: '*',
+                text: doc.serial,
+                fontSize: 16 , 
+                decoration: 'underline', 
+                decorationStyle: 'dotted'
+              },
+              {
+                width: 100,
+                text: 'เลขครุภัณฑ์ ',
+                fontSize: 16, 
+                bold: true
+              },
+              {
+                width: '*',
+                text: doc.item_code,
+                fontSize: 16 , 
+                decoration: 'underline', 
+                decorationStyle: 'dotted'
+              },
+              {
+                width: 100,
+                text: 'จำนวน 1 ชิ้น',
+                fontSize: 16
+              }
+            ]
+          })
+        })
+      })
+      
+      ct.push(' ')
+      ct.push(' ')
+      this.userData((res) => {
+        ct.push({
+          text: 'ตามรายการที่ยืมนี้ ข้าพเจ้าจะรักษาเป็นอย่างดี หากเกิดการชำรุดเสียหาย สูญหาย หรืออยู่ในสภาพที่ไม่สะอาดเรียบร้อย ข้าพเจ้ายินดีรับผิดชอบโดยไม่มีเงื่อนไขใด ๆ ทั้งสิ้น',
+          fontSize: 16,
+          bold: true
+        })
+
+        ct.push(' ')
+        ct.push(' ')
+        ct.push({
+          text: 'ลงชื่อ ...................................... ผู้ขอยืม',
+          fontSize: 16
+        })
+
+        ct.push({
+          text: '( '+ res.fname +' '+ res.lname +' )',
+          fontSize: 16
+        })
+      })
+
+      ct.push(' ')
+      ct.push(' ')
+      ct.push({
+        columns: [
+          {
+            width: 300,
+            text: 'ลงชื่อ ...................................... อาจารย์ (กรณ๊นิสิต เป็นผู้ยืม)',
+            fontSize: 16
+          },
+          {
+            width: '*',
+            text: 'ลงชื่อ ...................................... ผู้อนุญาต',
+            fontSize: 16
+          }
+        ]
+      })
+
+      ct.push({
+        columns: [
+          {
+            width: 300,
+            text: '(                                     )',
+            fontSize: 16
+          },
+          {
+            width: '*',
+            text: '(  ผศ.ดร.อัครพันธ์ วงศ์กังแห  )',
+            fontSize: 16
+          }
+        ]
+      })
+
+      ct.push(' ')
+      ct.push({
+        text: 'การรับและคืน',
+        fontSize: 16,
+        bold: true
+      })
+
+      ct.push({
+        table: {
+          headerRows: 1,
+          widths: [ 60, 219, 219 ],
+          body: [
+            [ 
+              { text: 'รายการที่', fontSize: 16,
+                alignment: 'center', bold: true,
+                fillColor: '#D1F2EB' }, 
+              { text: 'การรับของ', fontSize: 16, 
+                alignment: 'center', bold: true, 
+                fillColor: '#D1F2EB' },
+              { text: 'การคืนของ', fontSize: 16, 
+                alignment: 'center', bold: true, 
+                fillColor: '#D1F2EB' }
+            ]
+          ]
+        }
+      })
+
+      this.borrowList((res) => {
+        res.forEach((doc) => {
+          ct.push({
+            table: {
+              widths: [ 60, 60, 150, 60, 150 ],
+              body: [
+                [
+                  { text: doc.id, alignment: 'center', fontSize: 16, rowSpan:2 }, 
+                  { text: 'วันที่รับ', alignment: 'center', fontSize: 16, rowSpan:2 }, 
+                  { text: 'ลงชื่อ.............................ผู้รับของ', fontSize: 16 }, 
+                  { text: 'วันที่คืน',alignment: 'center', fontSize: 16, rowSpan:2 }, 
+                  { text: 'ลงชื่อ.............................ผู้ส่งคืน', fontSize: 16 },
+                ],
+                [
+                  {},
+                  {},
+                  { text: 'ลงชื่อ.............................ผู้จ่ายของ', fontSize: 16 },
+                  {},
+                  { text: 'ลงชื่อ.............................ผู้รับคืน', fontSize: 16 },
+                ]
+              ]
+            }
+          })
+        })
+      })
+
+      this.borrowList((res) => {
+        res.forEach((doc) => {
+          ct.push({ qr: doc.item_code, fit:'45' })
+        })
+      })
 
       return ct;
     },
@@ -86,9 +345,6 @@ export default {
     borrowList(callback){
       let data = JSON.parse(localStorage.getItem('borrowList'));
       callback(data)
-      // data.forEach((doc) => {
-      //   console.log('doc ',doc);
-      // });
     }
 	}
 }
