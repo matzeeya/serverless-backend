@@ -250,7 +250,7 @@ export default {
       ct.push({
         columns: [
           {
-            width: 300,
+            width: 320,
             text: 'ลงชื่อ ...................................... อาจารย์ (กรณ๊นิสิต เป็นผู้ยืม)',
             fontSize: 16
           },
@@ -265,7 +265,7 @@ export default {
       ct.push({
         columns: [
           {
-            width: 300,
+            width: 320,
             text: '(                                     )',
             fontSize: 16
           },
@@ -284,19 +284,23 @@ export default {
         bold: true
       })
 
+      ct.push(' ')
       ct.push({
         table: {
           headerRows: 1,
-          widths: [ 60, 219, 219 ],
+          widths: [ 50, 199, 199,50 ],
           body: [
             [ 
-              { text: 'รายการที่', fontSize: 16,
+              { text: 'รายการที่', fontSize: 15,
                 alignment: 'center', bold: true,
                 fillColor: '#D1F2EB' }, 
-              { text: 'การรับของ', fontSize: 16, 
+              { text: 'การรับของ', fontSize: 15, 
                 alignment: 'center', bold: true, 
                 fillColor: '#D1F2EB' },
-              { text: 'การคืนของ', fontSize: 16, 
+              { text: 'การคืนของ', fontSize: 15, 
+                alignment: 'center', bold: true, 
+                fillColor: '#D1F2EB' },
+              { text: 'QR Code', fontSize: 15, 
                 alignment: 'center', bold: true, 
                 fillColor: '#D1F2EB' }
             ]
@@ -308,21 +312,23 @@ export default {
         res.forEach((doc) => {
           ct.push({
             table: {
-              widths: [ 60, 60, 150, 60, 150 ],
+              widths: [ 50, 50, 140, 50, 140, 50 ],
               body: [
                 [
-                  { text: doc.id, alignment: 'center', fontSize: 16, rowSpan:2 }, 
-                  { text: 'วันที่รับ', alignment: 'center', fontSize: 16, rowSpan:2 }, 
-                  { text: 'ลงชื่อ.............................ผู้รับของ', fontSize: 16 }, 
-                  { text: 'วันที่คืน',alignment: 'center', fontSize: 16, rowSpan:2 }, 
-                  { text: 'ลงชื่อ.............................ผู้ส่งคืน', fontSize: 16 },
+                  { text: doc.id, alignment: 'center', fontSize: 15, rowSpan:2 },
+                  { text: 'วันที่รับ', alignment: 'center', fontSize: 15, rowSpan:2 }, 
+                  { text: 'ลงชื่อ.............................ผู้รับของ', fontSize: 15 }, 
+                  { text: 'วันที่คืน',alignment: 'center', fontSize: 15, rowSpan:2 }, 
+                  { text: 'ลงชื่อ.............................ผู้ส่งคืน', fontSize: 15 },
+                  { qr: doc.item_code, fit: '45', alignment: 'center', rowSpan:2 }
                 ],
                 [
                   {},
                   {},
-                  { text: 'ลงชื่อ.............................ผู้จ่ายของ', fontSize: 16 },
+                  { text: 'ลงชื่อ.............................ผู้จ่ายของ', fontSize: 15 },
                   {},
-                  { text: 'ลงชื่อ.............................ผู้รับคืน', fontSize: 16 },
+                  { text: 'ลงชื่อ.............................ผู้รับคืน', fontSize: 15 },
+                  {}
                 ]
               ]
             }
@@ -330,11 +336,11 @@ export default {
         })
       })
 
-      this.borrowList((res) => {
-        res.forEach((doc) => {
-          ct.push({ qr: doc.item_code, fit:'45' })
-        })
-      })
+      // this.borrowList((res) => {
+      //   res.forEach((doc) => {
+      //     ct.push({ qr: doc.item_code, fit:'45' })
+      //   })
+      // })
 
       return ct;
     },
