@@ -33,10 +33,6 @@ import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
 
 import ViewBorrowList from './views/Report/ViewBorrowList.vue'
-import ViewReturnList from './views/Report/ViewReturnList.vue'
-import ViewRepairList from './views/Report/ViewRepairList.vue'
-import ViewAdmitList from './views/Report/ViewAdmitList.vue'
-import ViewSellList from './views/Report/ViewSellList.vue'
 
 import ExportBorrow from './views/Export/ExportBorrow.vue'
 import ExportReturn from './views/Export/ExportReturn.vue'
@@ -181,26 +177,6 @@ const routes = [
     path: '/viewBorrowList',
     name: 'ViewBorrowList',
     component: ViewBorrowList
-  },
-  {
-    path: '/viewReturnList',
-    name: 'ViewReturnList',
-    component: ViewReturnList
-  },
-  {
-    path: '/viewRepairList',
-    name: 'ViewRepairList',
-    component: ViewRepairList
-  },
-  {
-    path: '/viewAdmitList',
-    name: 'ViewAdmitList',
-    component: ViewAdmitList
-  },
-  {
-    path: '/viewSellList',
-    name: 'ViewSellList',
-    component: ViewSellList
   },
   {
     path: '/exportBorrow',

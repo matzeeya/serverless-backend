@@ -14,6 +14,15 @@ export default {
 		exportPDF() {
       var doc = this.docContent();
 
+      // this.borrowList((res) => {
+      //   for(let i=0; res.length<2; i++){
+      //     console.log(res[i])
+      //   }
+      // })
+
+      this.addPage(doc);
+    },
+    addPage(doc){
       const docDefinition = {
         pageSize: 'A4',
         content: doc,
@@ -151,7 +160,7 @@ export default {
         })
       })
       
-      ct.push('')
+      ct.push(' ')
       this.borrowList((res) => {
         res.forEach((doc) => {
           ct.push({
@@ -335,12 +344,6 @@ export default {
           })
         })
       })
-
-      // this.borrowList((res) => {
-      //   res.forEach((doc) => {
-      //     ct.push({ qr: doc.item_code, fit:'45' })
-      //   })
-      // })
 
       return ct;
     },

@@ -118,6 +118,7 @@ export default {
       const docRef = firestore.collection('items');
       const query = docRef
         .where('item_code','==',id)
+        .where('status','==','จำหน่าย')
       query
       .get()
       .then(snapshot =>{

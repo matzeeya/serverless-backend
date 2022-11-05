@@ -162,6 +162,7 @@
             }
             localStorage.setItem("userData",JSON.stringify(user));
             localStorage.setItem("borrowList",JSON.stringify(this.datas));
+            window.location.replace(line.liffUrl + '/exportborrow');
           });
         })
         .catch(err =>{

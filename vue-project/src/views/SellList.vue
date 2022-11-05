@@ -126,7 +126,7 @@
           const docRef = firestore.collection('items');
           const query = docRef
             .where('item_code','==',this.items[i])
-            .where('status','==','ใช้งาน')
+            .where('status','in',['รอจำหน่าย','ใช้งาน'])
           query
           .get()
           .then(snapshot =>{
