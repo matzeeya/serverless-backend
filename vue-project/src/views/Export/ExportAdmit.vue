@@ -119,7 +119,6 @@ export default {
       const docRef = firestore.collection('items');
       const query = docRef
         .where('item_code','==',id)
-        .where('status','==','แจ้งซ่อม')
       query
       .get()
       .then(snapshot =>{
