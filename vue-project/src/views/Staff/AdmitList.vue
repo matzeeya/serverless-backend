@@ -45,12 +45,12 @@
 </template>
 <script>
   import Swal from 'sweetalert2'
-  import ListAppearance from '../components/ListAppearance.vue';
-  import ListRoom from '../components/ListRoom.vue';
+  import ListAppearance from '../../components/ListAppearance.vue';
+  import ListRoom from '../../components/ListRoom.vue';
 
-  import firestore from '../../../firebase-config/vue/firebase';
+  import firestore from '../../../../firebase-config/vue/firebase';
 
-  const line = require('../../../line-config/config');
+  const line = require('../../../../line-config/config');
 
   export default {
     components: {

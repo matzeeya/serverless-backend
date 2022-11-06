@@ -55,11 +55,12 @@
   </div>
 </template>
 <script>
+  import axios from 'axios'
   import Swal from 'sweetalert2'
-  import ListRoom from '../components/ListRoom.vue';
-  import firestore from '../../../firebase-config/vue/firebase';
+  import ListRoom from '../../components/ListRoom.vue';
+  import firestore from '../../../../firebase-config/vue/firebase';
 
-  const line = require('../../../line-config/config');
+  const line = require('../../../../line-config/config');
 
   export default {
     components: {
@@ -133,6 +134,87 @@
         }
         liff.closeWindow();
       },
+      async submitHandler(){
+        if(this.items.length > 0){
+          let obj = {
+            borrow_by:this.userProfile,
+            reason: this.reason,
+            created_at: new Date()
+          };
+
+          let item = []
+          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการยืมลงใน data สำหรับไว้ add data ลงตาราง borrows
+            item[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
+          }
+
+          obj['items'] = item
+
+          this.checkType((res) =>{
+            console.log('user type '+res.type);
+            if(res.type === '1'){
+              this.queryDoc(obj);
+            }else{
+              this.reply(res.uid);
+            }
+          })          
+        }else{
+          Swal.fire({
+            title: 'ผิดพลาด',
+            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
+            icon: 'error'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.closeWindow()
+            }
+          })
+        }
+      },
+      checkType(callback){
+        const docRef = firestore.collection('userRegister');
+        const query = docRef
+        .where('userid','==',this.userProfile)
+        query
+        .get()
+        .then(snapshot =>{
+          snapshot.forEach((doc) => {
+            if(doc.data().type === 'user'){
+              callback({
+                type: '0',
+                uid: doc.data().userid
+              });
+            }else{
+              callback({
+                type: '1',
+                uid: doc.data().userid
+              });
+            }
+          });
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
+      reply(uid){
+        const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
+        const LINE_HEADER = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${line.accessToken}`,
+        };
+        axios({
+          method: 'post',
+          url: `${LINE_MESSAGING_API}/message/multicast`,
+          headers: LINE_HEADER,
+          data: JSON.stringify({
+            "to": uid,
+            "messages":[
+              {
+                "type":"text",
+                "text":"Hello, world1"
+              }
+            ]
+          }),
+        });
+      },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
           const docRef = firestore.collection('items');
@@ -187,33 +269,6 @@
             })
           })
           .catch(err => console.log(err));
-      },
-      async submitHandler(){
-        if(this.items.length > 0){
-          let obj = {
-            borrow_by:this.userProfile,
-            reason: this.reason,
-            created_at: new Date()
-          };
-
-          let item = []
-          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการยืมลงใน data สำหรับไว้ add data ลงตาราง borrows
-            item[i] = {'item_code':this.items[i],'room':this.room_at[i],'status':'0'}
-          }
-
-          obj['items'] = item
-          this.queryDoc(obj);
-        }else{
-          Swal.fire({
-            title: 'ผิดพลาด',
-            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
-            icon: 'error'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              liff.closeWindow()
-            }
-          })
-        }
       }
     }
   }

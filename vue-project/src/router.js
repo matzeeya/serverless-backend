@@ -4,15 +4,15 @@ import Home from './views/Home.vue'
 import ViewData from './views/ViewData.vue'
 
 import AddBorrowList from './views/AddBorrowList.vue'
-import BorrowList from './views/BorrowList.vue'
+
 import AddReturnList from './views/AddReturnList.vue'
-import ReturnList from './views/ReturnList.vue'
+
 import AddRepairList from './views/AddRepairList.vue'
-import RepairList from './views/RepairList.vue'
+
 import AddAdmitList from './views/AddAdmitList.vue'
-import AdmitList from './views/AdmitList.vue'
+
 import AddSellList from './views/AddSellList.vue'
-import SellList from './views/SellList.vue'
+
 
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
@@ -23,10 +23,16 @@ import BorrowItem from './views/User/BorrowItem.vue'
 import ReturnItem from './views/User/ReturnItem.vue'
 
 import CheckItem from './views/Staff/CheckItem.vue'
+import Movement from './views/Staff/Movement.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import AdmitItem from './views/Staff/AdmitItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
-import Movement from './views/Staff/Movement.vue'
+
+import BorrowList from './views/Staff/BorrowList.vue'
+import ReturnList from './views/Staff/ReturnList.vue'
+import RepairList from './views/Staff/RepairList.vue'
+import AdmitList from './views/Staff/AdmitList.vue'
+import SellList from './views/Staff/SellList.vue'
 
 import Verify from './views/Admin/UserVerify.vue'
 import AddItem from './views/Admin/AddItem.vue'
@@ -39,6 +45,10 @@ import ExportReturn from './views/Export/ExportReturn.vue'
 import ExportRepair from './views/Export/ExportRepair.vue'
 import ExportAdmit from './views/Export/ExportAdmit.vue'
 import ExportSell from './views/Export/ExportSell.vue'
+
+
+
+
 
 Vue.use(VueRouter)
 

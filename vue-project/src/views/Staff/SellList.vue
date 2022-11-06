@@ -7,7 +7,6 @@
             <th scope='col'>ลำดับที่</th>
             <th scope='col'>หมายเลขครุภัณฑ์</th>
             <th scope='col'>สถานที่เก็บ</th>
-            <th scope='col'>สภาพการใช้งาน</th>
             <th scope='col'>ลบ</th>
           </tr>
         </thead>
@@ -20,7 +19,6 @@
                 :getAllRoom='getRoom'
                 style='width:140px'/>
             </td>
-            <td><ListAppearance :getAppearances='getState'/></td>
             <td>
               <input 
                 type='checkbox' 
@@ -30,22 +28,11 @@
                 @change='deleteItem'>
             </td>
           </tr>
-          <tr>
-            <td colspan='5'>
-              <b-field label='หมายเหตุ'>
-                <b-input 
-                  type='textarea'
-                  v-model='note' 
-                  placeholder='หมายเหตุ...'>
-                </b-input>
-              </b-field>
-            </td>
-          </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan='3'>
-              <button class='button is-success' type='submit'>ยืนยันรายการคืน</button>
+            <td colspan='2'>
+              <button class='button is-success' type='submit'>ยืนยันรายการจำหน่าย</button>
             </td>
             <td colspan='2'>
               <button class='button is-danger' @click='cancelHandler'>ยกเลิก</button>
@@ -58,27 +45,22 @@
 </template>
 <script>
   import Swal from 'sweetalert2'
-  import ListAppearance from '../components/ListAppearance.vue';
-  import ListRoom from '../components/ListRoom.vue';
+  import ListRoom from '../../components/ListRoom.vue';
+  import firestore from '../../../../firebase-config/vue/firebase';
 
-  import firestore from '../../../firebase-config/vue/firebase';
-
-  const line = require('../../../line-config/config');
+  const line = require('../../../../line-config/config');
 
   export default {
     components: {
-      ListRoom,
-      ListAppearance
+      ListRoom
     },
     data() {
       return {
         code: this.$route.params.code,
         userProfile: null,
-        itemStatus: [],
         items: [],
         delItem: [],
-        room_at: [],
-        note: null
+        room_at: []
       }
     },
     mounted(){
@@ -115,9 +97,6 @@
       getRoom(room){ // เลือกห้องที่เก็บปัจจุบัน
         this.room_at.push(room);
       },
-      getState(state){ // เลือกสภาพการใช้งาน
-        this.itemStatus.push(state);
-      },
       deleteItem(){ // เมื่อเลือก 'ลบ' ใน checkbok
         Swal.fire({
           title: 'เลขครุภัณฑ์: '+ this.delItem,
@@ -143,94 +122,40 @@
         liff.closeWindow();
       },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
-        for (let i = 0; i < this.items.length; i++) {
+        for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
           const docRef = firestore.collection('items');
           const query = docRef
             .where('item_code','==',this.items[i])
-            .where('status','==','ถูกยืม')
+            .where('status','in',['รอจำหน่าย','ใช้งาน'])
           query
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryBorrowData(this.items[i],this.room_at[i],doc.data().room) // query ค่าในตาราง borrow 
-              this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+              // console.log(doc.id);
+              this.updateStatus(doc.id,this.room_at[i]) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
-        this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
+        this.addSell(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการจำหน่ายที่ตาราง sells
       },
-      queryBorrowData(id,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
-        let updateStatus = {};
-        let obj = [];
-      
-        const docRef = firestore.collection('borrows');
-        const query = docRef
-          .where('items','array-contains',{
-            'item_code': id,
-            'room': room,
-            'status': '0'
-          });
-        query
-        .get()
-        .then(snapshot =>{
-          if(!snapshot.empty){ // หากพบข้อมูลสามารถคืนได้
-            snapshot.forEach((doc) => {
-              for(let i=0; i < doc.data().items.length; i++){ // loop จำนวนรายการยืมใน field items
-                if(doc.data().items[i].item_code == id){ // ถ้า item_code ใน field ตรงกับ item_code ที่ต้องการคืน
-                  obj[`${i}`] = { // เปลี่ยนค่าใน field ตามค่าที่รับเข้ามาใหม่
-                    'item_code': id,
-                    'room': room_at,
-                    'status':'1'
-                  }
-                }else{ // ถ้า item_code ใน field ไม่ตรงกับ item_code ที่ต้องการคืน
-                  obj[`${i}`] = { // คงค่าเดิมที่มีในตาราง borrows
-                    'item_code': doc.data().items[i].item_code,
-                    'room': doc.data().items[i].room,
-                    'status': doc.data().items[i].status
-                  }
-                }
-              }
-              updateStatus['items'] = obj;
-              this.updateBorrowStatus(doc.id,updateStatus); // update สถานะในตาราง borrows
-            });
-          }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
-            console.log('ไม่สามารถคืนรายการได้')
-          }
-        })
-        .catch(err =>{
-          console.log(err);
-        }); 
-      },
-      updateBorrowStatus(id,data){ // update สถานะในตาราง borrows
-        const docRef = firestore.collection('borrows');
-        const query = docRef.doc(id)
-        query
-        .update(data)
-        .then(()=>{
-          console.log('Updated Borrows Status Success!!');
-        })
-        .catch(err =>{
-          console.log(err);
-        });
-      },
-      updateItemStatus(id,room_at,state){
+      updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
         const item = firestore.collection('items');
         const query = item.doc(id)
         query
-        .update({status:state,room:room_at})
+        .update({status:'จำหน่าย',room:room_at})
         .then(()=>{
-          console.log('Updated Items Status Success!!');
+          console.log('Updated Success!!');
         })
         .catch(err =>{
           console.log(err);
         });
       },
-      addReturn(data){ // เพิ่มรายการคืนลงในตาราง returns
-        const turn = firestore.collection('returns');
-        turn.add(data)
+      addSell(data){ // เพิ่มข้อมูลรายการจำหน่ายในตาราง sells
+        const sell = firestore.collection('sells');
+        sell.add(data)
           .then(()=>{
             Swal.fire({
               title: 'บันทึกข้อมูลสำเร็จ',
@@ -240,7 +165,7 @@
                 liff.sendMessages([
                   {
                     'type' : 'text',
-                    'text' : 'คืนเรียบร้อยแล้วค่ะ'
+                    'text' : 'จำหน่ายเรียบร้อยแล้วค่ะ'
                   }
                 ]).then(() => {
                   this.cancelHandler();
@@ -254,18 +179,13 @@
       async submitHandler(){
         if(this.items.length > 0){
           let obj = {
-            return_by:this.userProfile,
-            note: this.note,
+            created_by:this.userProfile,
             created_at: new Date()
           };
 
           let item = []
-          for (let i = 0; i < this.items.length; i++) {
-            item[i] = {
-              'item_code':this.items[i],
-              'room':this.room_at[i],
-              'status':this.itemStatus[i]
-            }
+          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการจำหน่ายลงใน data สำหรับไว้ add data ลงตาราง sells
+            item[i] = {'item_code':this.items[i],'room':this.room_at[i]}
           }
 
           obj['items'] = item

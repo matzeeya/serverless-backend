@@ -7,6 +7,7 @@
             <th scope='col'>ลำดับที่</th>
             <th scope='col'>หมายเลขครุภัณฑ์</th>
             <th scope='col'>สถานที่เก็บ</th>
+            <th scope='col'>อาการเสีย</th>
             <th scope='col'>ลบ</th>
           </tr>
         </thead>
@@ -20,6 +21,12 @@
                 style='width:140px'/>
             </td>
             <td>
+              <b-input 
+                type='text'
+                v-model='reason[index]'>
+              </b-input>
+            </td>
+            <td>
               <input 
                 type='checkbox' 
                 :id='key'
@@ -31,8 +38,8 @@
         </tbody>
         <tfoot>
           <tr>
-            <td colspan='2'>
-              <button class='button is-success' type='submit'>ยืนยันรายการจำหน่าย</button>
+            <td colspan='3'>
+              <button class='button is-success' type='submit'>ยืนยันรายการแจ้งซ่อม</button>
             </td>
             <td colspan='2'>
               <button class='button is-danger' @click='cancelHandler'>ยกเลิก</button>
@@ -45,10 +52,10 @@
 </template>
 <script>
   import Swal from 'sweetalert2'
-  import ListRoom from '../components/ListRoom.vue';
-  import firestore from '../../../firebase-config/vue/firebase';
+  import ListRoom from '../../components/ListRoom.vue';
+  import firestore from '../../../../firebase-config/vue/firebase';
 
-  const line = require('../../../line-config/config');
+  const line = require('../../../../line-config/config');
 
   export default {
     components: {
@@ -60,7 +67,8 @@
         userProfile: null,
         items: [],
         delItem: [],
-        room_at: []
+        room_at: [],
+        reason: []
       }
     },
     mounted(){
@@ -126,7 +134,7 @@
           const docRef = firestore.collection('items');
           const query = docRef
             .where('item_code','==',this.items[i])
-            .where('status','in',['รอจำหน่าย','ใช้งาน'])
+            .where('status','in',['ชำรุด','ใช้งาน'])
           query
           .get()
           .then(snapshot =>{
@@ -139,13 +147,13 @@
             console.log(err);
           });
         }
-        this.addSell(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการจำหน่ายที่ตาราง sells
+        this.addRepair(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการแจ้งซ่อมที่ตาราง repairs
       },
       updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
         const item = firestore.collection('items');
         const query = item.doc(id)
         query
-        .update({status:'จำหน่าย',room:room_at})
+        .update({status:'แจ้งซ่อม',room:room_at})
         .then(()=>{
           console.log('Updated Success!!');
         })
@@ -153,9 +161,9 @@
           console.log(err);
         });
       },
-      addSell(data){ // เพิ่มข้อมูลรายการจำหน่ายในตาราง sells
-        const sell = firestore.collection('sells');
-        sell.add(data)
+      addRepair(data){ // เพิ่มข้อมูลรายการยืมในตาราง repairs
+        const repair = firestore.collection('repairs');
+        repair.add(data)
           .then(()=>{
             Swal.fire({
               title: 'บันทึกข้อมูลสำเร็จ',
@@ -165,7 +173,7 @@
                 liff.sendMessages([
                   {
                     'type' : 'text',
-                    'text' : 'จำหน่ายเรียบร้อยแล้วค่ะ'
+                    'text' : 'แจ้งซ่อมเรียบร้อยแล้วค่ะ'
                   }
                 ]).then(() => {
                   this.cancelHandler();
@@ -184,8 +192,13 @@
           };
 
           let item = []
-          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการจำหน่ายลงใน data สำหรับไว้ add data ลงตาราง sells
-            item[i] = {'item_code':this.items[i],'room':this.room_at[i]}
+          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการแจ้งซ่อมลงใน data สำหรับไว้ add data ลงตาราง repair
+            item[i] = {
+              'item_code':this.items[i],
+              'room':this.room_at[i],
+              'reason':this.reason[i],
+              'status':'0'
+            }
           }
 
           obj['items'] = item
