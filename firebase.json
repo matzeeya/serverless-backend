@@ -27,6 +27,17 @@
         "source": "/api/**",
         "function": "api"
       }
+    ],
+    "headers": [ 
+      {
+        "source" : "**",
+        "headers" : [ 
+          {
+            "key" : "Access-Control-Allow-Origin",
+            "value" : "*"
+          } 
+        ]
+      } 
     ]
   },
   "storage": {
@@ -60,7 +71,7 @@
     },
     "ui": {
       "enabled": true,
-      "port": 8082
+      "port": 8088
     }
   }
 }

@@ -55,8 +55,9 @@
   </div>
 </template>
 <script>
-  import axios from 'axios'
+  // import axios from 'axios'
   import Swal from 'sweetalert2'
+  // import { v4 as uuidv4 } from 'uuid';
   import ListRoom from '../../components/ListRoom.vue';
   import firestore from '../../../../firebase-config/vue/firebase';
 
@@ -68,12 +69,12 @@
     },
     data() {
       return {
-        code: this.$route.params.code,
         userProfile: null,
         items: [],
         delItem: [],
         room_at: [],
-        reason: null
+        reason: null,
+        // uuid: uuidv4()
       }
     },
     mounted(){
@@ -154,7 +155,20 @@
             if(res.type === '1'){
               this.queryDoc(obj);
             }else{
-              this.reply(res.uid);
+              liff.sendMessages([
+                {
+                  'type' : 'text',
+                  'text' : 'ส่งคำขอยืมครุภัณฑ์'
+                }
+              ]).then(() => {
+                this.requestBorrow(obj, function(res) {
+                  if(res === 'success'){
+                    // this.replyMsg(uid);
+                    this.cancelHandler();
+                    liff.closeWindow();
+                  }
+                })
+              })
             }
           })          
         }else{
@@ -194,27 +208,35 @@
           console.log(err);
         });
       },
-      reply(uid){
-        const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
-        const LINE_HEADER = {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${line.accessToken}`,
-        };
-        axios({
-          method: 'post',
-          url: `${LINE_MESSAGING_API}/message/multicast`,
-          headers: LINE_HEADER,
-          data: JSON.stringify({
-            "to": uid,
-            "messages":[
-              {
-                "type":"text",
-                "text":"Hello, world1"
-              }
-            ]
-          }),
-        });
+      requestBorrow(req,res){
+        const docRef = firestore.collection('requestBorrow');
+        docRef.add(req)
+        .then(()=>{
+          res('success');
+        })
+        .catch(err => console.log(err));
       },
+      // replyMsg(uid){
+      //   const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
+      //   const LINE_HEADER = {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${line.accessToken}`
+      //   };
+      //   axios({
+      //     method: 'post',
+      //     url: `${LINE_MESSAGING_API}/message/push`,
+      //     headers: LINE_HEADER,
+      //     data: JSON.stringify({
+      //       to: uid,
+      //       messages: [
+      //         {
+      //           type: 'text',
+      //           text: 'hello'
+      //         }
+      //       ],
+      //     }),
+      //   });
+      // },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
           const docRef = firestore.collection('items');
@@ -250,25 +272,25 @@
       addBorrow(data){ // เพิ่มข้อมูลรายการยืมในตาราง borrows
         const borrow = firestore.collection('borrows');
         borrow.add(data)
-          .then(()=>{
-            Swal.fire({
-              title: 'บันทึกข้อมูลสำเร็จ',
-              icon: 'success'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                liff.sendMessages([
-                  {
-                    'type' : 'text',
-                    'text' : 'ยืมเรียบร้อยแล้วค่ะ'
-                  }
-                ]).then(() => {
-                  this.cancelHandler();
-                  liff.closeWindow();
-                })
-              }
-            })
+        .then(()=>{
+          Swal.fire({
+            title: 'บันทึกข้อมูลสำเร็จ',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.sendMessages([
+                {
+                  'type' : 'text',
+                  'text' : 'ยืมเรียบร้อยแล้วค่ะ'
+                }
+              ]).then(() => {
+                this.cancelHandler();
+                liff.closeWindow();
+              })
+            }
           })
-          .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
       }
     }
   }
