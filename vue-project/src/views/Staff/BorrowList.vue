@@ -55,9 +55,7 @@
   </div>
 </template>
 <script>
-  // import axios from 'axios'
   import Swal from 'sweetalert2'
-  // import { v4 as uuidv4 } from 'uuid';
   import ListRoom from '../../components/ListRoom.vue';
   import firestore from '../../../../firebase-config/vue/firebase';
 
@@ -74,7 +72,6 @@
         delItem: [],
         room_at: [],
         reason: null,
-        // uuid: uuidv4()
       }
     },
     mounted(){
@@ -163,7 +160,6 @@
               ]).then(() => {
                 this.requestBorrow(obj, function(res) {
                   if(res === 'success'){
-                    // this.replyMsg(uid);
                     this.cancelHandler();
                     liff.closeWindow();
                   }
@@ -216,27 +212,6 @@
         })
         .catch(err => console.log(err));
       },
-      // replyMsg(uid){
-      //   const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
-      //   const LINE_HEADER = {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${line.accessToken}`
-      //   };
-      //   axios({
-      //     method: 'post',
-      //     url: `${LINE_MESSAGING_API}/message/push`,
-      //     headers: LINE_HEADER,
-      //     data: JSON.stringify({
-      //       to: uid,
-      //       messages: [
-      //         {
-      //           type: 'text',
-      //           text: 'hello'
-      //         }
-      //       ],
-      //     }),
-      //   });
-      // },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
           const docRef = firestore.collection('items');
