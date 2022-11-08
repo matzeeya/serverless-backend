@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
 const check = require('../models/checkItem');
 const search = require('../models/searchItem');
@@ -8,6 +8,9 @@ const back = require('../models/returnItem');
 const repair = require('../models/repairItem');
 const admit = require('../models/admitItem');
 const sell = require('../models/sellItem');
+
+const reqBorrow = require('../models/requestBorrow');
+const reqReturn = require('../models/requestReturn');
 
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
 const LINE_HEADER = {
@@ -36,8 +39,10 @@ const linebot = async (req, res) => {
           admit.getdata(req, res, msg[1]);
         } else if (msg[0] === 'จำหน่ายครุภัณฑ์') {
           sell.getdata(req, res, msg[1]);
-        } else if(event.message.text === 'ส่งคำขอยืมครุภัณฑ์'){
-          replyBorrowRequest(config.uid,{ type: 'text', text: 'มีคำขอยืมรายการครุภัณฑ์ค่ะ' })
+        } else if (event.message.text === 'ส่งคำขอยืมครุภัณฑ์') {
+          reqBorrow.getAdminUid();
+        } else if (event.message.text === 'ส่งคำขอคืนครุภัณฑ์') {
+          reqReturn.getAdminUid();
         } else {
           postToDialogflow(req);
         }
@@ -58,23 +63,6 @@ const reply = (replyToken, payload) => {
     headers: LINE_HEADER,
     data: JSON.stringify({
       replyToken: replyToken,
-      messages: [payload],
-    }),
-  });
-};
-
-const replyBorrowRequest = (uid, payload) => {
-  const LINE_HEADER_PUSH = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${config.accessToken}`,
-    'X-Line-Retry-Key': uuidv4()
-  };
-  axios({
-    method: 'post',
-    url: `${LINE_MESSAGING_API}/message/push`,
-    headers: LINE_HEADER_PUSH,
-    data: JSON.stringify({
-      to: uid,
       messages: [payload],
     }),
   });
