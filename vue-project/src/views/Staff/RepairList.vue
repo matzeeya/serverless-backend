@@ -63,7 +63,6 @@
     },
     data() {
       return {
-        code: this.$route.params.code,
         userProfile: null,
         items: [],
         delItem: [],
@@ -177,7 +176,6 @@
                   }
                 ]).then(() => {
                   this.cancelHandler();
-                  liff.closeWindow();
                 })
               }
             })

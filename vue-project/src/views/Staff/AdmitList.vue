@@ -59,7 +59,6 @@
     },
     data() {
       return {
-        code: this.$route.params.code,
         userProfile: null,
         itemStatus: [],
         items: [],
@@ -228,7 +227,6 @@
                   }
                 ]).then(() => {
                   this.cancelHandler();
-                  liff.closeWindow();
                 })
               }
             })

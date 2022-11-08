@@ -1,52 +1,40 @@
 <template>
-  <div>
+  <div class='container-fluid'>
     <form @submit.prevent='submitHandler'>
       <table class='table table-striped'>
         <thead>
           <tr>
-            <th scope='col'>ลำดับที่</th>
+            <th scope='col' colspan='5'>คำขอรายการยืม</th>
+          </tr>
+          <tr>
+            <th scope='col'>ลำดับ</th>
+            <th scope='col'>รายการ</th>
             <th scope='col'>หมายเลขครุภัณฑ์</th>
+            <th scope='col'>S/N</th>
             <th scope='col'>สถานที่เก็บ</th>
-            <th scope='col'>ลบ</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for='item,index in items' :key='index'>
             <th scope='row'>{{ index + 1 }}</th>
-            <td>{{ item }}</td>
-            <td>
-              <ListRoom 
-                :getAllRoom='getRoom'
-                style='width:140px'/>
-            </td>
-            <td>
-              <input 
-                type='checkbox' 
-                :id='key'
-                :value='item'
-                v-model='delItem'
-                @change='deleteItem'>
-            </td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.item_code }}</td>
+            <td>{{ item.serial }}</td>
+            <td>{{ item.room }}</td>
           </tr>
           <tr>
-            <td colspan='4'>
-              <b-field label='มีความประสงค์ยืม วัสดุ/ครุภัณฑ์ ของคณะ เพื่อ'>
-                <b-input 
-                  type='textarea'
-                  v-model='reason' 
-                  placeholder='กรุณาระบุเหตุผล'>
-                </b-input>
-              </b-field>
+            <td colspan='5'>
+              <p>มีความประสงค์ยืม วัสดุ/ครุภัณฑ์ ของคณะ เพื่อ {{ reason }}</p>
             </td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan='2'>
-              <button class='button is-success' type='submit'>ยืนยันรายการยืม</button>
+            <td colspan='3'>
+              <button class='button is-success' type='submit'>อนุมัติรายการยืม</button>
             </td>
             <td colspan='2'>
-              <button class='button is-danger' @click='cancelHandler'>ยกเลิก</button>
+              <button class='button is-danger' @click='cancelHandler'>ไม่อนุมัติรายการยืม</button>
             </td>
           </tr>
         </tfoot>
@@ -55,22 +43,16 @@
   </div>
 </template>
 <script>
+  import moment  from 'moment'
   import Swal from 'sweetalert2'
-  import ListRoom from '../../components/ListRoom.vue';
   import firestore from '../../../../firebase-config/vue/firebase';
-
   const line = require('../../../../line-config/config');
 
   export default {
-    components: {
-      ListRoom
-    },
     data() {
       return {
         userProfile: null,
         items: [],
-        delItem: [],
-        room_at: [],
         reason: null,
       }
     },
@@ -97,60 +79,72 @@
       });
     },
     created() {
-      for (let i = 0; i < localStorage.length; i++) { // loop หาเลขครุภัณฑ์
-        const key = localStorage.key(i);
-        if(key.search('item:') >= 0){
-          this.items.push(localStorage.getItem(key)); // push เลขครุภัณฑ์ใน items
-        }
-      }
+      let obj = [];
+      let arr = [];
+      let m1 = moment();
+      let m2 = moment();
+      m1.startOf('day');
+      m2.endOf('day');
+
+      const docRef = firestore.collection('borrows');
+      const query = docRef
+        .where('created_at', '>=', m1.toDate())
+        .where('created_at', '<=', m2.toDate())
+      query
+      .get()
+      .then(snapshot =>{
+        let index=1;
+        snapshot.forEach((doc) => {
+          for(let i=0; i < doc.data().items.length; i++){
+            let data = doc.data().items[i];
+            this.itemName(data.item_code, function(res) {
+              if(res){
+                obj = {
+                  'id': index,
+                  'name': res.name,
+                  'item_code': data.item_code,
+                  'serial': res.serial,
+                  'room': data.room,
+                }
+                arr.push(obj);
+                arr['reason'] = doc.data().reason;
+                index++; 
+              }
+            });
+          }
+          this.items = arr;
+        });
+      })
+      .catch(err =>{
+        console.log(err);
+      });
     },
     methods : {
-      getRoom(room){ // เลือกห้องที่เก็บปัจจุบัน
-        this.room_at.push(room);
-      },
-      deleteItem(){ // เมื่อเลือก 'ลบ' ใน checkbok
-        Swal.fire({
-          title: 'เลขครุภัณฑ์: '+ this.delItem,
-          text: 'ต้องการลบรายการใช่หรือไม่?',
-          showCancelButton: true,
-          cancelButtonColor: '#d33',
-          icon: 'question'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let rm = 'item:' + this.delItem;
-            localStorage.removeItem(rm);
-            window.location.reload();
-          }
-        })
-      },
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if(key.search('item:') >= 0){
-            localStorage.removeItem(key);
-          }
-        }
         liff.closeWindow();
+      },
+      itemName(id, callback){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
+        const docRef = firestore.collection('items');
+        const query = docRef
+          .where('item_code','==',id)
+          .where('status','==','ถูกยืม')
+        query
+        .get()
+        .then(snapshot =>{
+          snapshot.forEach((doc) => {
+            callback({
+              name: doc.data().name, 
+              serial: doc.data().serial,
+              brand: doc.data().brand
+            })
+          });
+        })
+        .catch(err =>{
+          console.log(err);
+        });
       },
       async submitHandler(){
         if(this.items.length > 0){
-          let obj = {
-            borrow_by:this.userProfile,
-            reason: this.reason,
-            created_at: new Date()
-          };
-
-          let item = []
-          for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการยืมลงใน data สำหรับไว้ add data ลงตาราง borrows
-            item[i] = {
-              'item_code':this.items[i],
-              'room':this.room_at[i],
-              'status':'0'
-            }
-          }
-
-          obj['items'] = item
-
           this.checkType((res) =>{
             if(res.type === '1'){
               this.queryDoc(obj);
@@ -232,7 +226,6 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              // console.log(doc.id);
               this.updateStatus(doc.id,this.room_at[i]) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
@@ -266,7 +259,7 @@
               liff.sendMessages([
                 {
                   'type' : 'text',
-                  'text' : 'ยืมเรียบร้อยแล้วค่ะ'
+                  'text' : 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ'
                 }
               ]).then(() => {
                 this.cancelHandler();

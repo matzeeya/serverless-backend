@@ -2,17 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import ViewData from './views/ViewData.vue'
-
 import AddBorrowList from './views/AddBorrowList.vue'
-
 import AddReturnList from './views/AddReturnList.vue'
-
 import AddRepairList from './views/AddRepairList.vue'
-
 import AddAdmitList from './views/AddAdmitList.vue'
-
 import AddSellList from './views/AddSellList.vue'
-
 
 import Regiter from './views/Default/UserRegister.vue'
 import Login from './views/Default/UserLogin.vue'
@@ -27,7 +21,8 @@ import Movement from './views/Staff/Movement.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import AdmitItem from './views/Staff/AdmitItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
-
+import RequestBorrow from './views/Staff/RequestBorrow.vue'
+import RequestReturn from './views/Staff/RequestReturn.vue'
 import BorrowList from './views/Staff/BorrowList.vue'
 import ReturnList from './views/Staff/ReturnList.vue'
 import RepairList from './views/Staff/RepairList.vue'
@@ -45,10 +40,6 @@ import ExportReturn from './views/Export/ExportReturn.vue'
 import ExportRepair from './views/Export/ExportRepair.vue'
 import ExportAdmit from './views/Export/ExportAdmit.vue'
 import ExportSell from './views/Export/ExportSell.vue'
-
-
-
-
 
 Vue.use(VueRouter)
 
@@ -69,6 +60,11 @@ const routes = [
     component: AddBorrowList
   },
   {
+    path: '/requestBorrow',
+    name: 'RequestBorrow',
+    component: RequestBorrow
+  },
+  {
     path: '/borrowList',
     name: 'BorrowList',
     component: BorrowList
@@ -77,6 +73,11 @@ const routes = [
     path: '/addReturnList/:code',
     name: 'AddReturnList',
     component: AddReturnList
+  },
+  {
+    path: '/requestReturn',
+    name: 'RequestReturn',
+    component: RequestReturn
   },
   {
     path: '/returnList',

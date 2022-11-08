@@ -72,7 +72,6 @@
     },
     data() {
       return {
-        code: this.$route.params.code,
         userProfile: null,
         itemStatus: [],
         items: [],
@@ -141,6 +140,96 @@
           }
         }
         liff.closeWindow();
+      },
+      async submitHandler(){
+        if(this.items.length > 0){
+          let obj = {
+            return_by:this.userProfile,
+            note: this.note,
+            created_at: new Date()
+          };
+
+          let item = []
+          for (let i = 0; i < this.items.length; i++) {
+            item[i] = {
+              'item_code':this.items[i],
+              'room':this.room_at[i],
+              'status':this.itemStatus[i]
+            }
+          }
+
+          obj['items'] = item
+          
+          this.checkType((res) =>{
+            if(res.type === '1'){
+              this.queryDoc(obj);
+            }else{
+              this.requestReturn(obj, function(res) {
+                if(res === 'success'){
+                  Swal.fire({
+                    title: 'คืนครุภัณฑ์',
+                    text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
+                    icon: 'success'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      liff.sendMessages([
+                        {
+                          'type' : 'text',
+                          'text' : 'ส่งคำขอคืนครุภัณฑ์'
+                        }
+                      ]).then(() => {
+                        this.cancelHandler();
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }else{
+          Swal.fire({
+            title: 'ผิดพลาด',
+            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
+            icon: 'error'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.closeWindow()
+            }
+          })
+        }
+      },
+      checkType(callback){
+        const docRef = firestore.collection('userRegister');
+        const query = docRef
+        .where('userid','==',this.userProfile)
+        query
+        .get()
+        .then(snapshot =>{
+          snapshot.forEach((doc) => {
+            if(doc.data().type === 'user'){
+              callback({
+                type: '0',
+                uid: doc.data().userid
+              });
+            }else{
+              callback({
+                type: '1',
+                uid: doc.data().userid
+              });
+            }
+          });
+        })
+        .catch(err =>{
+          console.log(err);
+        });
+      },
+      requestReturn(req,res){
+        const docRef = firestore.collection('requestReturn');
+        docRef.add(req)
+        .then(()=>{
+          res('success');
+        })
+        .catch(err => console.log(err));
       },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) {
@@ -244,43 +333,11 @@
                   }
                 ]).then(() => {
                   this.cancelHandler();
-                  liff.closeWindow();
                 })
               }
             })
           })
           .catch(err => console.log(err));
-      },
-      async submitHandler(){
-        if(this.items.length > 0){
-          let obj = {
-            return_by:this.userProfile,
-            note: this.note,
-            created_at: new Date()
-          };
-
-          let item = []
-          for (let i = 0; i < this.items.length; i++) {
-            item[i] = {
-              'item_code':this.items[i],
-              'room':this.room_at[i],
-              'status':this.itemStatus[i]
-            }
-          }
-
-          obj['items'] = item
-          this.queryDoc(obj);
-        }else{
-          Swal.fire({
-            title: 'ผิดพลาด',
-            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
-            icon: 'error'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              liff.closeWindow()
-            }
-          })
-        }
       }
     }
   }
