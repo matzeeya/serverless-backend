@@ -60,7 +60,7 @@ const routes = [
     component: AddBorrowList
   },
   {
-    path: '/requestBorrow',
+    path: '/requestBorrow/:ureq',
     name: 'RequestBorrow',
     component: RequestBorrow
   },
@@ -75,7 +75,7 @@ const routes = [
     component: AddReturnList
   },
   {
-    path: '/requestReturn',
+    path: '/requestReturn/:ureq',
     name: 'RequestReturn',
     component: RequestReturn
   },

@@ -166,21 +166,21 @@
             }else{
               this.requestReturn(obj, function(res) {
                 if(res === 'success'){
-                  Swal.fire({
-                    title: 'คืนครุภัณฑ์',
-                    text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                    icon: 'success'
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      liff.sendMessages([
-                        {
-                          'type' : 'text',
-                          'text' : 'ส่งคำขอคืนครุภัณฑ์'
-                        }
-                      ]).then(() => {
-                        this.cancelHandler();
-                      })
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'ส่งคำขอคืนครุภัณฑ์'
                     }
+                  ]).then(() => {
+                    Swal.fire({
+                      title: 'คืนครุภัณฑ์',
+                      text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
+                      icon: 'success'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        this.cancelHandler();
+                      }
+                    })
                   })
                 }
               })

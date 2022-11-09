@@ -13,7 +13,7 @@ const LINE_HEADER = {
     'X-Line-Retry-Key': uuidv4(),
 };
 
-function payload(uid) {
+function payload(userReq,uid) {
   replyReturnRequest(uid, {
       type: 'flex',
       altText: 'ไม่รองรับการแสดงผลบนอุปกรณ์นี้',
@@ -73,7 +73,7 @@ function payload(uid) {
               action: {
                 type: 'uri',
                 label: 'ดูรายละเอียด',
-                uri: 'https://liff.line.me/1657280459-K8l6ZJWY/requestReturn',
+                uri: `${config.LIFF_URL}/requestReturn/${userReq}`,
               },
               style: 'primary',
             },
@@ -95,7 +95,7 @@ const replyReturnRequest = (uid, payload) => {
   });
 };
 
-function getAdminUid() {
+function getAdminUid(userReq) {
   const uid = [];
   const docRef = firestore.collection('userRegister');
   const query = docRef
@@ -107,7 +107,7 @@ function getAdminUid() {
       snapshot.forEach((doc) => {
         uid.push(doc.data().userid);
       });
-      payload(uid);
+      payload(userReq,uid);
     }
   })
   .catch((err) =>{

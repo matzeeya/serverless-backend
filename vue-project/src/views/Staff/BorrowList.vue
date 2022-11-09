@@ -157,21 +157,21 @@
             }else{
               this.requestBorrow(obj, function(res) {
                 if(res === 'success'){
-                  Swal.fire({
-                    title: 'ยืมครุภัณฑ์',
-                    text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                    icon: 'success'
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      liff.sendMessages([
-                        {
-                          'type' : 'text',
-                          'text' : 'ส่งคำขอยืมครุภัณฑ์'
-                        }
-                      ]).then(() => {
-                        this.cancelHandler();
-                      })
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'ส่งคำขอยืมครุภัณฑ์'
                     }
+                  ]).then(() => {
+                    Swal.fire({
+                    title: 'ยืมครุภัณฑ์',
+                      text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
+                      icon: 'success'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        this.cancelHandler();
+                      }
+                    })
                   })
                 }
               })

@@ -23,17 +23,17 @@
             <td>{{ item.room }}</td>
           </tr>
           <tr>
-            <td colspan='5'>
-              <p>มีความประสงค์ยืม วัสดุ/ครุภัณฑ์ ของคณะ เพื่อ {{ reason }}</p>
-            </td>
+            <td colspan='5'><p>มีความประสงค์ยืม วัสดุ/ครุภัณฑ์ ของคณะ เพื่อ <u>{{ items.reason }}</u></p></td>
+          </tr>
+          <tr v-for='user,index in users' :key='index'>
+            <td colspan='3'>&nbsp;</td>
+            <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ user.fullname }}</u></p></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan='3'>
+            <td colspan='5'>
               <button class='button is-success' type='submit'>อนุมัติรายการยืม</button>
-            </td>
-            <td colspan='2'>
               <button class='button is-danger' @click='cancelHandler'>ไม่อนุมัติรายการยืม</button>
             </td>
           </tr>
@@ -51,9 +51,11 @@
   export default {
     data() {
       return {
+        ureq: this.$route.params.ureq,
         userProfile: null,
+        dateNow: moment().format('ll'),
         items: [],
-        reason: null,
+        users: []
       }
     },
     mounted(){
@@ -78,16 +80,19 @@
         console.error('Error initialize LIFF: ', err);
       });
     },
-    created() {
+    created(){
       let obj = [];
       let arr = [];
+      let user = [];
+      let data = [];
       let m1 = moment();
       let m2 = moment();
       m1.startOf('day');
       m2.endOf('day');
 
-      const docRef = firestore.collection('borrows');
+      const docRef = firestore.collection('requestBorrow');
       const query = docRef
+        .where('borrow_by','==',this.ureq)
         .where('created_at', '>=', m1.toDate())
         .where('created_at', '<=', m2.toDate())
       query
@@ -107,12 +112,22 @@
                   'room': data.room,
                 }
                 arr.push(obj);
+                arr['doc'] = doc.id;
                 arr['reason'] = doc.data().reason;
                 index++; 
               }
             });
           }
           this.items = arr;
+          this.checkType(this.ureq, function(res) {
+            data = {
+              fullname: res.fullname,
+              userType: res.userType,
+              stuid: res.stuid
+            }
+            user.push(data);
+          });
+            this.users = user;
         });
       })
       .catch(err =>{
@@ -127,15 +142,14 @@
         const docRef = firestore.collection('items');
         const query = docRef
           .where('item_code','==',id)
-          .where('status','==','ถูกยืม')
+          .where('status','==','ใช้งาน')
         query
         .get()
         .then(snapshot =>{
           snapshot.forEach((doc) => {
             callback({
               name: doc.data().name, 
-              serial: doc.data().serial,
-              brand: doc.data().brand
+              serial: doc.data().serial
             })
           });
         })
@@ -144,62 +158,69 @@
         });
       },
       async submitHandler(){
-        if(this.items.length > 0){
-          this.checkType((res) =>{
-            if(res.type === '1'){
-              this.queryDoc(obj);
-            }else{
-              this.requestBorrow(obj, function(res) {
+        this.checkType(this.userProfile,(res) =>{
+          if(res.type === '1'){ // ถ้า type == เจ้าหน้าที่ หรือ ผู้ดูแลระบบ
+            if(this.items.length > 0){
+              let obj = {
+                borrow_by: this.ureq,
+                reason: this.items.reason,
+                created_at: new Date()
+              };
+
+              let item = [];
+              for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการยืมลงใน data สำหรับไว้ add data ลงตาราง borrows
+                item[i] = {
+                  'item_code': this.items[i].item_code,
+                  'room': this.items[i].room,
+                  'status':'0'
+                }
+              }
+
+              obj['items'] = item;
+              // this.queryDoc(obj);
+              // console.log('data ',obj);
+              this.rmRequest(this.items.doc,(res) =>{
                 if(res === 'success'){
-                  Swal.fire({
-                    title: 'ยืมครุภัณฑ์',
-                    text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                    icon: 'success'
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      liff.sendMessages([
-                        {
-                          'type' : 'text',
-                          'text' : 'ส่งคำขอยืมครุภัณฑ์'
-                        }
-                      ]).then(() => {
-                        this.cancelHandler();
-                      })
-                    }
-                  })
+                  this.queryDoc(obj);
                 }
               })
             }
-          })          
-        }else{
-          Swal.fire({
+          }else{
+            Swal.fire({
             title: 'ผิดพลาด',
-            text: 'กรุณาเพิ่มรายการครุภัณฑ์ก่อนค่ะ',
-            icon: 'error'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              liff.closeWindow()
-            }
-          })
-        }
+              text: 'คุณไม่มีสิทธิ์ในหน้านี้ค่ะ',
+              icon: 'error'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                liff.closeWindow();
+              }
+            })
+          }
+        })          
       },
-      checkType(callback){
+      checkType(uid,callback){ // เช็คประเภทผู้ใช้งาน
         const docRef = firestore.collection('userRegister');
         const query = docRef
-        .where('userid','==',this.userProfile)
+        .where('userid','==',uid)
         query
         .get()
         .then(snapshot =>{
           snapshot.forEach((doc) => {
             if(doc.data().type === 'user'){
-              callback({
+              callback({ // Callback ผู้ใช้งานทั่วไป
                 type: '0',
-                uid: doc.data().userid
+                uid: doc.data().userid,
+                fullname: doc.data().fname + ' ' + doc.data().lname,
+                userType: doc.data().usertype,
+                stuid: doc.data().stuid
               });
             }else{
-              callback({
+              callback({ // Callback เจ้าหน้าที่ หรือ ผู้ดูแลระบบ
                 type: '1',
-                uid: doc.data().userid
+                uid: doc.data().userid,
+                fullname: doc.data().fname + ' ' + doc.data().lname,
+                userType: doc.data().usertype,
+                stuid: doc.data().stuid
               });
             }
           });
@@ -207,14 +228,6 @@
         .catch(err =>{
           console.log(err);
         });
-      },
-      requestBorrow(req,res){
-        const docRef = firestore.collection('requestBorrow');
-        docRef.add(req)
-        .then(()=>{
-          res('success');
-        })
-        .catch(err => console.log(err));
       },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
@@ -256,18 +269,25 @@
             icon: 'success'
           }).then((result) => {
             if (result.isConfirmed) {
-              liff.sendMessages([
-                {
-                  'type' : 'text',
-                  'text' : 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ'
+              this.rmRequest((res) =>{
+                if(res === 'success'){
+                  liff.sendMessages([
+                    {
+                      'type' : 'text',
+                      'text' : 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ'
+                    }
+                  ]).then(() => {
+                    liff.closeWindow();
+                  })
                 }
-              ]).then(() => {
-                this.cancelHandler();
               })
             }
           })
         })
         .catch(err => console.log(err));
+      },
+      rmRequest(id,callback){
+        callback('success');
       }
     }
   }

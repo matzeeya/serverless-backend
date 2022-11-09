@@ -21,6 +21,7 @@ const LINE_HEADER = {
 const linebot = async (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
   const event = req.body.events[0];
+  const userId = event.source.userId;
   if (req.method === 'POST') {
     if (event.message.type === 'text') {
       const msg = event.message.text.split(': ');
@@ -40,9 +41,9 @@ const linebot = async (req, res) => {
         } else if (msg[0] === 'จำหน่ายครุภัณฑ์') {
           sell.getdata(req, res, msg[1]);
         } else if (event.message.text === 'ส่งคำขอยืมครุภัณฑ์') {
-          reqBorrow.getAdminUid();
+          reqBorrow.getAdminUid(userId);
         } else if (event.message.text === 'ส่งคำขอคืนครุภัณฑ์') {
-          reqReturn.getAdminUid();
+          reqReturn.getAdminUid(userId);
         } else {
           postToDialogflow(req);
         }

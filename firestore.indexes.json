@@ -13,6 +13,34 @@
           "mode": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionId": "requestBorrow",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "borrow_by",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "mode": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionId": "requestReturn",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "return_by",
+          "mode": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "mode": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []
