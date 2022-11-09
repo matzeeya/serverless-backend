@@ -1,5 +1,4 @@
 const axios = require('axios');
-// const { v4: uuidv4 } = require('uuid');
 const config = require('../config');
 const check = require('../models/checkItem');
 const search = require('../models/searchItem');
@@ -18,12 +17,14 @@ const LINE_HEADER = {
   Authorization: `Bearer ${config.accessToken}`,
 };
 
+
 const linebot = async (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
   const event = req.body.events[0];
   const userId = event.source.userId;
   if (req.method === 'POST') {
     if (event.message.type === 'text') {
+      const resText = event.message.text;
       const msg = event.message.text.split(': ');
       if (msg[1] !== 'null') {
         if (msg[0] === 'หมายเลขครุภัณฑ์') {
@@ -40,9 +41,9 @@ const linebot = async (req, res) => {
           admit.getdata(req, res, msg[1]);
         } else if (msg[0] === 'จำหน่ายครุภัณฑ์') {
           sell.getdata(req, res, msg[1]);
-        } else if (event.message.text === 'ส่งคำขอยืมครุภัณฑ์') {
+        } else if (resText === 'ส่งคำขอยืมครุภัณฑ์') {
           reqBorrow.getAdminUid(userId);
-        } else if (event.message.text === 'ส่งคำขอคืนครุภัณฑ์') {
+        } else if (resText === 'ส่งคำขอคืนครุภัณฑ์') {
           reqReturn.getAdminUid(userId);
         } else {
           postToDialogflow(req);

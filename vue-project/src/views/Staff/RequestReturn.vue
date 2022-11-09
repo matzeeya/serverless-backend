@@ -23,7 +23,7 @@
             <td>{{ item.room }}</td>
           </tr>
           <tr>
-            <td colspan='5'><p>หมายเหตุ <u>{{ items.reason }}</u></p></td>
+            <td colspan='5'><p>หมายเหตุ <u>{{ items.note }}</u></p></td>
           </tr>
           <tr v-for='user,index in users' :key='index'>
             <td colspan='3'>&nbsp;</td>
