@@ -13,7 +13,7 @@ const LINE_HEADER = {
     'X-Line-Retry-Key': uuidv4(),
 };
 
-function payload(userReq,uid) {
+function payload(userReq, uid) {
   replyBorrowRequest(uid, {
       type: 'flex',
       altText: 'ไม่รองรับการแสดงผลบนอุปกรณ์นี้',
@@ -107,7 +107,7 @@ function getAdminUid(userReq) {
       snapshot.forEach((doc) => {
         uid.push(doc.data().userid);
       });
-      payload(userReq,uid);
+      payload(userReq, uid);
     }
   })
   .catch((err) =>{

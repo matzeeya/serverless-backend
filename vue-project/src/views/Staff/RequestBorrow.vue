@@ -29,6 +29,10 @@
             <td colspan='3'>&nbsp;</td>
             <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ user.fullname }}</u></p></td>
           </tr>
+          <tr>
+            <td colspan='3'>&nbsp;</td>
+            <td colspan='2' ><p>วันที่ยืม <u>{{ items.created_at }}</u></p></td>
+          </tr>
         </tbody>
         <tfoot>
           <tr>
@@ -63,7 +67,7 @@
       liff.init({
         liffId: line.liffID
       }).then(() => {
-        console.log('LIFF initialize finished');
+        // console.log('LIFF initialize finished');
         if (liff.isLoggedIn()) {
           liff.getProfile()
           .then(profile => {
@@ -73,7 +77,7 @@
             console.error(err);
           })
         } else {
-          console.log('LIFF is not logged in');
+          // console.log('LIFF is not logged in');
           liff.login();
         }
       }).catch((err) => {
@@ -118,7 +122,12 @@
               }
             });
           }
+
+          this.thaiDate(this.dateNow, function(res) {
+            arr['created_at'] = res
+          });
           this.items = arr;
+
           this.checkType(this.ureq, function(res) {
             data = {
               fullname: res.fullname,
@@ -127,7 +136,7 @@
             }
             user.push(data);
           });
-            this.users = user;
+          this.users = user;
         });
       })
       .catch(err =>{
@@ -136,7 +145,18 @@
     },
     methods : {
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
-        liff.closeWindow();
+        this.rmRequest(this.items.doc,(res) =>{
+          if(res === 'success'){
+            liff.sendMessages([
+              {
+                'type' : 'text',
+                'text' : 'ไม่อนุมัติรายการยืมค่ะ'
+              }
+            ]).then(() => {
+              liff.closeWindow();
+            })
+          }
+        })
       },
       itemName(id, callback){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         const docRef = firestore.collection('items');
@@ -233,13 +253,13 @@
         for (let i = 0; i < this.items.length; i++) { // loop ทีละรายการ
           const docRef = firestore.collection('items');
           const query = docRef
-            .where('item_code','==',this.items[i])
+            .where('item_code','==',this.items[i].item_code)
             .where('status','==','ใช้งาน')
           query
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.updateStatus(doc.id,this.room_at[i]) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
+              this.updateStatus(doc.id,this.items[i].room) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
           .catch(err =>{
@@ -287,7 +307,28 @@
         .catch(err => console.log(err));
       },
       rmRequest(id,callback){
-        callback('success');
+        const docRef = firestore.collection('requestBorrow');
+        const query = docRef.doc(id)
+        query
+        .delete()
+        .then(()=>{
+          callback('success');
+        })
+        .catch(err =>{
+          console.log(err);
+          callback('error');
+        })
+      },
+      thaiDate(date,callback) {
+        const arr1= ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const arr2= ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน','กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+
+        for (let i=0; i<arr1.length; i++) {
+          date = date.replace(arr1[i], arr2[i]);
+        }
+        date = date.replaceAll(',', '');
+        const str = date.split(' ');
+        callback(str[1] +' '+ str[0] +' '+ (parseInt(str[2])+543));
       }
     }
   }

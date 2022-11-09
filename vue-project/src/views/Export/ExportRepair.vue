@@ -97,7 +97,7 @@ export default {
     liff.init({
       liffId: line.liffID
     }).then(() => {
-      console.log('LIFF initialize finished');
+      // console.log('LIFF initialize finished');
       if (liff.isLoggedIn()) {
         liff.getProfile()
         .then(profile => {
@@ -107,7 +107,7 @@ export default {
           console.error(err);
         })
       } else {
-        console.log('LIFF is not logged in');
+        // console.log('LIFF is not logged in');
         liff.login();
       }
     }).catch((err) => {

@@ -21,20 +21,21 @@ export default {
     };
   },
   created() {
-    const query = userRegister
-    .where("userid","==",'U526d4d82828ca15b4df1c38ae37047b7')
-    query
-    .get()
-    .then(snapshot =>{
-      snapshot.forEach((doc)=>{
-        this.photo = doc.data().link
-        this.fullName = doc.data().pname + doc.data().fname + ' '+ doc.data().lname
-        this.userType = doc.data().usertype
-      })
-    })
-    .catch(err =>{
-      console.log(err);
-    })
+    // const query = userRegister
+    // .where("userid","==",'')
+    // query
+    // .get()
+    // .then(snapshot =>{
+    //   snapshot.forEach((doc)=>{
+    //     this.photo = doc.data().link
+    //     this.fullName = doc.data().pname + doc.data().fname + ' '+ doc.data().lname
+    //     this.userType = doc.data().usertype
+    //   })
+    // })
+    // .catch(err =>{
+    //   console.log(err);
+    // })
+    console.log('test');
   }
 }
 </script>
