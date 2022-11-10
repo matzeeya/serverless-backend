@@ -197,8 +197,7 @@
               }
 
               obj['items'] = item;
-              // this.queryDoc(obj);
-              // console.log('data ',obj);
+
               this.rmRequest(this.items.doc,(res) =>{
                 if(res === 'success'){
                   this.queryDoc(obj);

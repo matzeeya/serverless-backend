@@ -41,9 +41,16 @@ import ExportRepair from './views/Export/ExportRepair.vue'
 import ExportAdmit from './views/Export/ExportAdmit.vue'
 import ExportSell from './views/Export/ExportSell.vue'
 
+import lifecycle from './views/User/RequestBorrow.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/test',
+    name: 'lifecycle',
+    component: lifecycle
+  },
   {
     path: '/',
     name: 'Home',

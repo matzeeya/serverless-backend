@@ -11,6 +11,9 @@ const sell = require('../models/sellItem');
 const reqBorrow = require('../models/requestBorrow');
 const reqReturn = require('../models/requestReturn');
 
+const appBorrow = require('../models/approvedBorrow');
+const appReturn = require('../models/approvedReturn');
+
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
 const LINE_HEADER = {
   'Content-Type': 'application/json',
@@ -45,6 +48,10 @@ const linebot = async (req, res) => {
           reqBorrow.getAdminUid(userId);
         } else if (resText === 'ส่งคำขอคืนครุภัณฑ์') {
           reqReturn.getAdminUid(userId);
+        } else if (resText === 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ') {
+          appBorrow.getUid(resText);
+        } else if (resText === 'อนุมัติรายการคืนเรียบร้อยแล้วค่ะ') {
+          appReturn.getUid(resText);
         } else {
           postToDialogflow(req);
         }

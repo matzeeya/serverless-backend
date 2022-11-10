@@ -154,7 +154,7 @@
             console.error(err)
           })
         } else {
-          console.log('LIFF is not logged in')
+          // console.log('LIFF is not logged in')
           liff.login()
         }
       }).catch((err) => {
