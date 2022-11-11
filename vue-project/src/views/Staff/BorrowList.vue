@@ -123,14 +123,14 @@
           }
         })
       },
-      cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
+      cancelHandler(callback){ // เมื่อคลิกปุ่ม ยกเลิก
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if(key.search('item:') >= 0){
             localStorage.removeItem(key);
           }
         }
-        liff.closeWindow();
+        callback('success');
       },
       async submitHandler(){
         if(this.items.length > 0){
@@ -155,23 +155,29 @@
             if(res.type === '1'){
               this.queryDoc(obj);
             }else{
+              obj['status'] = '0'; // เช็ค status table request borrows
               this.requestBorrow(obj, function(res) {
                 if(res === 'success'){
-                  liff.sendMessages([
-                    {
-                      'type' : 'text',
-                      'text' : 'ส่งคำขอยืมครุภัณฑ์'
-                    }
-                  ]).then(() => {
-                    Swal.fire({
+                  Swal.fire({
                     title: 'ยืมครุภัณฑ์',
-                      text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                      icon: 'success'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        this.cancelHandler();
-                      }
-                    })
+                    text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
+                    icon: 'success'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      this.cancelHandler((res)=>{
+                        if(res==='success'){
+                            liff.sendMessages([
+                          {
+                            'type' : 'text',
+                            'text' : 'ส่งคำขอยืมครุภัณฑ์'
+                          }
+                        ]).then(() =>{
+                          liff.closeWindow();
+                        })
+                        }
+                      });
+                      
+                    }
                   })
                 }
               })
@@ -232,27 +238,33 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              // console.log(doc.id);
-              this.updateStatus(doc.id,this.room_at[i]) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
+              this.updateStatus(doc.id,this.room_at[i],i,(res)=>{
+                if(res === 'success'){
+                  this.addBorrow(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการยืมที่ตาราง borrows
+                }
+              }); // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
-        this.addBorrow(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการยืมที่ตาราง borrows
       },
-      updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
-        const item = firestore.collection('items');
-        const query = item.doc(id)
-        query
-        .update({status:'ถูกยืม',room:room_at})
-        .then(()=>{
-          console.log('Updated Success!!');
-        })
-        .catch(err =>{
-          console.log(err);
-        });
+      updateStatus(id,room_at,i,callback){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
+        if(i < this.items.length){
+          const item = firestore.collection('items');
+          const query = item.doc(id)
+          query
+          .update({status:'ถูกยืม',room:room_at})
+          .then(()=>{
+            console.log('Updated Success!!');
+          })
+          .catch(err =>{
+            console.log(err);
+          });
+        }else{
+          callback('success');
+        }
       },
       addBorrow(data){ // เพิ่มข้อมูลรายการยืมในตาราง borrows
         const borrow = firestore.collection('borrows');
@@ -269,7 +281,11 @@
                   'text' : 'ยืมเรียบร้อยแล้วค่ะ'
                 }
               ]).then(() => {
-                this.cancelHandler();
+                this.cancelHandler((res)=>{
+                  if(res === 'success'){
+                    this.closeWindow();
+                  }
+                });
               })
             }
           })

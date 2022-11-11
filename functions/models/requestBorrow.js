@@ -25,7 +25,7 @@ function payload(userReq, uid) {
           contents: [
             {
               type: 'text',
-              text: 'คำขอรายการยืมครุภัณฑ์',
+              text: 'มีคำขอรายการยืมครุภัณฑ์',
               weight: 'bold',
               size: 'sm',
               color: '#AAAAAA',

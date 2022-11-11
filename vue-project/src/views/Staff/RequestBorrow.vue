@@ -4,6 +4,14 @@
       <table class='table table-striped'>
         <thead>
           <tr>
+            <td colspan='3'>&nbsp;</td>
+            <td colspan='2' ><p>วันที่ยืม <u>{{ items.created_at }}</u></p></td>
+          </tr>
+          <tr>
+            <td colspan='3'>&nbsp;</td>
+            <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ users.fullname }}</u></p></td>
+          </tr>
+          <tr>
             <th scope='col' colspan='5'>คำขอรายการยืม</th>
           </tr>
           <tr>
@@ -24,14 +32,6 @@
           </tr>
           <tr>
             <td colspan='5'><p>มีความประสงค์ยืม วัสดุ/ครุภัณฑ์ ของคณะ เพื่อ <u>{{ items.reason }}</u></p></td>
-          </tr>
-          <tr v-for='user,index in users' :key='index'>
-            <td colspan='3'>&nbsp;</td>
-            <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ user.fullname }}</u></p></td>
-          </tr>
-          <tr>
-            <td colspan='3'>&nbsp;</td>
-            <td colspan='2' ><p>วันที่ยืม <u>{{ items.created_at }}</u></p></td>
           </tr>
         </tbody>
         <tfoot>
@@ -61,87 +61,6 @@
         items: [],
         users: []
       }
-    },
-    mounted(){
-      const liff = this.$liff
-      liff.init({
-        liffId: line.liffID
-      }).then(() => {
-        // console.log('LIFF initialize finished');
-        if (liff.isLoggedIn()) {
-          liff.getProfile()
-          .then(profile => {
-            this.userProfile = profile.userId;
-          })
-          .catch((err) => {
-            console.error(err);
-          })
-        } else {
-          // console.log('LIFF is not logged in');
-          liff.login();
-        }
-      }).catch((err) => {
-        console.error('Error initialize LIFF: ', err);
-      });
-    },
-    created(){
-      let obj = [];
-      let arr = [];
-      let user = [];
-      let data = [];
-      let m1 = moment();
-      let m2 = moment();
-      m1.startOf('day');
-      m2.endOf('day');
-
-      const docRef = firestore.collection('requestBorrow');
-      const query = docRef
-        .where('borrow_by','==',this.ureq)
-        .where('created_at', '>=', m1.toDate())
-        .where('created_at', '<=', m2.toDate())
-      query
-      .get()
-      .then(snapshot =>{
-        let index=1;
-        snapshot.forEach((doc) => {
-          for(let i=0; i < doc.data().items.length; i++){
-            let data = doc.data().items[i];
-            this.itemName(data.item_code, function(res) {
-              if(res){
-                obj = {
-                  'id': index,
-                  'name': res.name,
-                  'item_code': data.item_code,
-                  'serial': res.serial,
-                  'room': data.room,
-                }
-                arr.push(obj);
-                arr['doc'] = doc.id;
-                arr['reason'] = doc.data().reason;
-                index++; 
-              }
-            });
-          }
-
-          this.thaiDate(this.dateNow, function(res) {
-            arr['created_at'] = res
-          });
-          this.items = arr;
-
-          this.checkType(this.ureq, function(res) {
-            data = {
-              fullname: res.fullname,
-              userType: res.userType,
-              stuid: res.stuid
-            }
-            user.push(data);
-          });
-          this.users = user;
-        });
-      })
-      .catch(err =>{
-        console.log(err);
-      });
     },
     methods : {
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
@@ -329,6 +248,85 @@
         const str = date.split(' ');
         callback(str[1] +' '+ str[0] +' '+ (parseInt(str[2])+543));
       }
+    },
+    created(){
+      let obj = [];
+      let arr = [];
+      let user = [];
+      let data = [];
+      let m1 = moment();
+      let m2 = moment();
+      m1.startOf('day');
+      m2.endOf('day');
+
+      const docRef = firestore.collection('requestBorrow');
+      const query = docRef
+        .where('borrow_by','==',this.ureq)
+        .where('created_at', '>=', m1.toDate())
+        .where('created_at', '<=', m2.toDate())
+      query
+      .get()
+      .then(snapshot =>{
+        let index=1;
+        snapshot.forEach((doc) => {
+          for(let i=0; i < doc.data().items.length; i++){
+            let data = doc.data().items[i];
+            this.itemName(data.item_code, function(res) {
+              if(res){
+                obj = {
+                  'id': index,
+                  'name': res.name,
+                  'item_code': data.item_code,
+                  'serial': res.serial,
+                  'room': data.room,
+                }
+                arr.push(obj);
+                arr['doc'] = doc.id;
+                arr['reason'] = doc.data().reason;
+                index++; 
+              }
+            });
+          }
+
+          this.thaiDate(this.dateNow, function(res) {
+            arr['created_at'] = res
+          });
+          this.items = arr;
+
+          this.checkType(this.ureq, function(res) {
+            data = {
+              fullname: res.fullname,
+              userType: res.userType,
+              stuid: res.stuid
+            }
+            user.push(data);
+          });
+          this.users = user;
+        });
+      })
+      .catch(err =>{
+        console.log(err);
+      });
+    },
+    mounted(){
+      const liff = this.$liff
+      liff.init({
+        liffId: line.liffID
+      }).then(() => {
+        if (liff.isLoggedIn()) {
+          liff.getProfile()
+          .then(profile => {
+            this.userProfile = profile.userId;
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+        } else {
+          liff.login();
+        }
+      }).catch((err) => {
+        console.error('Error initialize LIFF: ', err);
+      });
     }
   }
 </script>
