@@ -117,11 +117,8 @@
 
               obj['items'] = item;
 
-              this.rmRequest(this.items.doc,(res) =>{
-                if(res === 'success'){
-                  this.queryDoc(obj);
-                }
-              })
+              this.rmRequest(this.items.doc);
+              this.queryDoc(obj);
             }
           }else{
             Swal.fire({
@@ -177,33 +174,26 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.updateStatus(doc.id,this.items[i].room,i,(res)=>{
-                if(res === 'success'){
-                  this.addBorrow(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการยืมที่ตาราง borrows
-                }
-              }) // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
+              this.updateStatus(doc.id,this.items[i].room); // หากพบข้อมูล เรียกฟังก์ชัน update ส่ง id กับสถานที่เก็บปัจจุบันไป
             });
           })
           .catch(err =>{
             console.log(err);
           });
         }
+        this.addBorrow(data); // เมื่ออัพเดตข้อมูลในตาราง items แล้ว เพิ่มข้อมูลรายการยืมที่ตาราง borrows
       },
-      updateStatus(id,room_at,i,callback){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
-        if(i < this.items.length){
-          const item = firestore.collection('items');
-          const query = item.doc(id)
-          query
-          .update({status:'ถูกยืม',room:room_at})
-          .then(()=>{
-            console.log('Updated Success!!');
-          })
-          .catch(err =>{
-            console.log(err);
-          });
-        }else{
-          callback('success');
-        }
+      updateStatus(id,room_at){ // อัพเดต สถานที่เก็บปัจจุบัน ในตาราง items
+        const item = firestore.collection('items');
+        const query = item.doc(id)
+        query
+        .update({status:'ถูกยืม',room:room_at})
+        .then(()=>{
+          console.log('Updated Success!!');
+        })
+        .catch(err =>{
+          console.log(err);
+        });
       },
       addBorrow(data){ // เพิ่มข้อมูลรายการยืมในตาราง borrows
         const borrow = firestore.collection('borrows');
@@ -231,17 +221,16 @@
         })
         .catch(err => console.log(err));
       },
-      rmRequest(id,callback){
+      rmRequest(id){
         const docRef = firestore.collection('requestBorrow');
         const query = docRef.doc(id)
         query
         .delete()
         .then(()=>{
-          callback('success');
+          console.log('rm success');
         })
         .catch(err =>{
           console.log(err);
-          callback('error');
         })
       },
       thaiDate(date,callback) {

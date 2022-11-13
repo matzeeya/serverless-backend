@@ -71,7 +71,7 @@
     },
     "ui": {
       "enabled": true,
-      "port": 8082
+      "port": 8088
     }
   }
 }
