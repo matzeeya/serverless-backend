@@ -64,18 +64,15 @@
     },
     methods : {
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
-        this.rmRequest(this.items.doc,(res) =>{
-          if(res === 'success'){
-            liff.sendMessages([
-              {
-                'type' : 'text',
-                'text' : 'ไม่อนุมัติรายการยืมค่ะ'
-              }
-            ]).then(() => {
-              liff.closeWindow();
-            })
-          }
-        })
+        this.rmRequest(this.items.doc);
+          liff.sendMessages([
+            {
+              'type' : 'text',
+              'text' : 'ไม่อนุมัติรายการยืมค่ะ'
+            }
+          ]).then(() => {
+            liff.closeWindow();
+          })
       },
       itemName(id, callback){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         const docRef = firestore.collection('items');
