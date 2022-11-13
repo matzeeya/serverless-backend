@@ -1,5 +1,7 @@
 const axios = require('axios');
 const config = require('../config');
+
+const register = require('../models/userRegister');
 const check = require('../models/checkItem');
 const search = require('../models/searchItem');
 const borrow = require('../models/borrowItem');
@@ -46,6 +48,8 @@ const linebot = async (req, res) => {
           sell.getdata(req, res, msg[1]);
         } else if (resText === 'ส่งคำขอยืมครุภัณฑ์') {
           reqBorrow.getAdminUid(userId);
+        } else if (resText === 'ลงทะเบียนสำเร็จ') {
+          register.getAdminUid(userId);
         } else if (resText === 'ส่งคำขอคืนครุภัณฑ์') {
           reqReturn.getAdminUid(userId);
         } else if (resText === 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ') {

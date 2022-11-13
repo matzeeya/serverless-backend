@@ -17,20 +17,47 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2'
-import firestore from "../../../../firebase-config/vue/firebase"
-const userRegister = firestore.collection("userRegister")
+import Swal from 'sweetalert2';
+import firestore from "../../../../firebase-config/vue/firebase";
+const userRegister = firestore.collection("userRegister");
+
+const line = require('../../../../line-config/config');
 
 export default {
   name: 'Verify',
   data () {
     return {
+      ureq: this.$route.params.ureq,
+      userProfile: null,
       users: []
     }
   },
+  mounted(){
+    const liff = this.$liff
+    liff.init({
+      liffId: line.liffID
+    }).then(() => {
+      // console.log('LIFF initialize finished');
+      if (liff.isLoggedIn()) {
+        liff.getProfile()
+        .then(profile => {
+          this.userProfile = profile.userId;
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+      } else {
+        // console.log('LIFF is not logged in');
+        liff.login();
+      }
+    }).catch((err) => {
+      console.error('Error initialize LIFF: ', err);
+    });
+  },
   created() {
     const query = userRegister
-    .where("approve","==",'0')
+    .where('userid','==',this.ureq)
+    .where("approve","==",'false')
     query
     .get()
     .then(snapshot =>{
@@ -62,7 +89,7 @@ export default {
           if (result.isConfirmed) {
             let id = e.target.value
             userRegister.doc(id)
-            .update({approve: "1"})
+            .update({approve: "true",approver: this.userProfile})
             .then(res => {
               console.log(res)
               location.reload(true)
@@ -84,7 +111,7 @@ export default {
           if (result.isConfirmed) {
             let id = e.target.value
             userRegister.doc(id)
-            .update({approve: "2"})
+            .update({approve: "false",approver: this.userProfile})
             .then(() => {
               location.reload(true)
             })

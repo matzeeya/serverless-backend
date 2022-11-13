@@ -213,7 +213,14 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                liff.closeWindow()
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'ลงทะเบียนสำเร็จ'
+                  }
+                ]).then(() => {
+                  liff.closeWindow();
+                })
               }
             })
             // console.log("ลงทะเบียนสำเร็จ")

@@ -165,18 +165,17 @@
                   }).then((result) => {
                     if (result.isConfirmed) {
                       this.cancelHandler((res)=>{
+                        console.log(res);
                         if(res==='success'){
                             liff.sendMessages([
-                          {
-                            'type' : 'text',
-                            'text' : 'ส่งคำขอยืมครุภัณฑ์'
-                          }
-                        ]).then(() =>{
+                              {
+                                'type' : 'text',
+                                'text' : 'ส่งคำขอยืมครุภัณฑ์'
+                              }
+                            ])
                           liff.closeWindow();
-                        })
                         }
                       });
-                      
                     }
                   })
                 }

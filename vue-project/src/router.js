@@ -15,14 +15,14 @@ import SearchItem from './views/Default/SearchItem.vue'
 import Profile from './views/User/UserProfile.vue'
 import BorrowItem from './views/User/BorrowItem.vue'
 import ReturnItem from './views/User/ReturnItem.vue'
+import RequestBorrow from './views/User/RequestBorrow.vue'
+import RequestReturn from './views/User/RequestReturn.vue'
 
 import CheckItem from './views/Staff/CheckItem.vue'
 import Movement from './views/Staff/Movement.vue'
 import RepairItem from './views/Staff/RepairItem.vue'
 import AdmitItem from './views/Staff/AdmitItem.vue'
 import SellItem from './views/Staff/SellItem.vue'
-import RequestBorrow from './views/Staff/RequestBorrow.vue'
-import RequestReturn from './views/Staff/RequestReturn.vue'
 import BorrowList from './views/Staff/BorrowList.vue'
 import ReturnList from './views/Staff/ReturnList.vue'
 import RepairList from './views/Staff/RepairList.vue'
@@ -41,16 +41,9 @@ import ExportRepair from './views/Export/ExportRepair.vue'
 import ExportAdmit from './views/Export/ExportAdmit.vue'
 import ExportSell from './views/Export/ExportSell.vue'
 
-import lifecycle from './views/User/RequestBorrow.vue'
-
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/test',
-    name: 'lifecycle',
-    component: lifecycle
-  },
   {
     path: '/',
     name: 'Home',
@@ -182,7 +175,7 @@ const routes = [
     component: Movement
   },
   {
-    path: '/verify',
+    path: '/verify/:ureq',
     name: 'Verify',
     component: Verify
   },
