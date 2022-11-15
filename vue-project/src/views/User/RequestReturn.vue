@@ -10,7 +10,7 @@
             <th scope='col'>ลำดับ</th>
             <th scope='col'>รายการ</th>
             <th scope='col'>หมายเลขครุภัณฑ์</th>
-            <th scope='col'>S/N</th>
+            <th scope='col'>สภาพการใช้งาน</th>
             <th scope='col'>สถานที่เก็บ</th>
           </tr>
         </thead>
@@ -19,7 +19,7 @@
             <th scope='row'>{{ index + 1 }}</th>
             <td>{{ item.name }}</td>
             <td>{{ item.item_code }}</td>
-            <td>{{ item.serial }}</td>
+            <td>{{ item.status }}</td>
             <td>{{ item.room }}</td>
           </tr>
           <tr>
@@ -112,6 +112,7 @@
                   'id': index,
                   'name': res.name,
                   'item_code': data.item_code,
+                  'status': data.status,
                   'serial': res.serial,
                   'room': data.room,
                 }
@@ -198,11 +199,8 @@
 
               obj['items'] = item;
 
-              this.rmRequest(this.items.doc,(res) =>{
-                if(res === 'success'){
-                  this.queryDoc(obj);
-                }
-              })
+              this.rmRequest(this.items.doc);
+              this.queryDoc(obj);
             }
           }else{
             Swal.fire({
@@ -258,8 +256,11 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryBorrowData(this.items[i].item_code,this.items[i].room,doc.data().room) // query ค่าในตาราง borrow 
-              this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+              this.queryBorrowData(this.items[i].item_code,this.items[i].room,doc.data().room, function(res) {
+                if(res === 'success'){
+                  this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+                }
+              }) // query ค่าในตาราง borrow 
             });
           })
           .catch(err =>{
@@ -268,7 +269,7 @@
         }
         this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
       },
-      queryBorrowData(id,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+      queryBorrowData(id,room_at,room,callback){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
         let updateStatus = {};
         let obj = [];
       
@@ -300,7 +301,11 @@
                 }
               }
               updateStatus['items'] = obj;
-              this.updateBorrowStatus(doc.id,updateStatus); // update สถานะในตาราง borrows
+              this.updateBorrowStatus(doc.id,updateStatus, function(res) {
+                if(res === 'success'){
+                  callback('success');
+                }
+              }); // update สถานะในตาราง borrows
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -310,13 +315,14 @@
           console.log(err);
         }); 
       },
-      updateBorrowStatus(id,data){ // update สถานะในตาราง borrows
+      updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
         const docRef = firestore.collection('borrows');
         const query = docRef.doc(id)
         query
         .update(data)
         .then(()=>{
-          console.log('Updated Borrows Status Success!!');
+          // console.log('Updated Borrows Status Success!!');
+          res('success');
         })
         .catch(err =>{
           console.log(err);
@@ -360,17 +366,16 @@
           })
           .catch(err => console.log(err));
       },
-      rmRequest(id,callback){
+      rmRequest(id){
         const docRef = firestore.collection('requestReturn');
         const query = docRef.doc(id)
         query
         .delete()
         .then(()=>{
-          callback('success');
+          console.log('rm success');
         })
         .catch(err =>{
           console.log(err);
-          callback('error');
         })
       },
       thaiDate(date,callback) {

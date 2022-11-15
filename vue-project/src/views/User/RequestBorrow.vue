@@ -7,9 +7,9 @@
             <td colspan='3'>&nbsp;</td>
             <td colspan='2' ><p>วันที่ยืม <u>{{ items.created_at }}</u></p></td>
           </tr>
-          <tr>
+          <tr v-for='user,index in users' :key='index'>
             <td colspan='3'>&nbsp;</td>
-            <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ users.fullname }}</u></p></td>
+            <td colspan='2' ><p>ชื่อผู้ยืม <u>{{ user.fullname }}</u></p></td>
           </tr>
           <tr>
             <th scope='col' colspan='5'>คำขอรายการยืม</th>

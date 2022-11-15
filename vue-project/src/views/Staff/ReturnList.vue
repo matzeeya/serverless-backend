@@ -166,21 +166,21 @@
             }else{
               this.requestReturn(obj, function(res) {
                 if(res === 'success'){
-                  liff.sendMessages([
-                    {
-                      'type' : 'text',
-                      'text' : 'ส่งคำขอคืนครุภัณฑ์'
-                    }
-                  ]).then(() => {
-                    Swal.fire({
-                      title: 'คืนครุภัณฑ์',
-                      text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                      icon: 'success'
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        this.cancelHandler();
+                  Swal.fire({
+                    title: 'คืนครุภัณฑ์',
+                    text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
+                    icon: 'success'
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      liff.sendMessages([
+                      {
+                        'type' : 'text',
+                        'text' : 'ส่งคำขอคืนครุภัณฑ์'
                       }
-                    })
+                      ]).then(() => {
+                        this.cancelHandler();
+                      })
+                    }
                   })
                 }
               })
@@ -241,8 +241,11 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryBorrowData(this.items[i],this.room_at[i],doc.data().room) // query ค่าในตาราง borrow 
-              this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+              this.queryBorrowData(this.items[i],this.room_at[i],doc.data().room, function(res) {
+                if(res === 'success'){
+                  this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]); // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+                }
+              }); // query ค่าในตาราง borrow 
             });
           })
           .catch(err =>{
@@ -251,7 +254,7 @@
         }
         this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
       },
-      queryBorrowData(id,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+      queryBorrowData(id,room_at,room,callback){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
         let updateStatus = {};
         let obj = [];
       
@@ -283,7 +286,11 @@
                 }
               }
               updateStatus['items'] = obj;
-              this.updateBorrowStatus(doc.id,updateStatus); // update สถานะในตาราง borrows
+              this.updateBorrowStatus(doc.id,updateStatus, function(res) {
+                if(res === 'success'){
+                  callback('success');
+                }
+              }); // update สถานะในตาราง borrows
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -293,13 +300,14 @@
           console.log(err);
         }); 
       },
-      updateBorrowStatus(id,data){ // update สถานะในตาราง borrows
+      updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
         const docRef = firestore.collection('borrows');
         const query = docRef.doc(id)
         query
         .update(data)
         .then(()=>{
-          console.log('Updated Borrows Status Success!!');
+          // console.log('Updated Borrows Status Success!!');
+          res('success');
         })
         .catch(err =>{
           console.log(err);

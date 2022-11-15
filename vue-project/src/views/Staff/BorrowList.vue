@@ -130,7 +130,7 @@
             localStorage.removeItem(key);
           }
         }
-        this.closeWindow();
+        liff.closeWindow();
       },
       async submitHandler(){
         if(this.items.length > 0){
@@ -168,8 +168,9 @@
                           'type' : 'text',
                           'text' : 'ส่งคำขอยืมครุภัณฑ์'
                         }
-                      ])
-                      this.cancelHandler();
+                      ]).then(()=>{
+                        this.cancelHandler();
+                      })
                     }
                   })
                 }
@@ -183,7 +184,7 @@
             icon: 'error'
           }).then((result) => {
             if (result.isConfirmed) {
-              liff.closeWindow()
+              liff.closeWindow();
             }
           })
         }
