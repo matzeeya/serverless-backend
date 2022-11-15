@@ -155,7 +155,6 @@
             if(res.type === '1'){
               this.queryDoc(obj);
             }else{
-              obj['status'] = '0'; // เช็ค status table request borrows
               this.requestBorrow(obj, function(res) {
                 if(res === 'success'){
                   Swal.fire({

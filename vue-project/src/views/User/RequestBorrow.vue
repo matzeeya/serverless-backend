@@ -257,7 +257,6 @@
         .where('borrow_by','==',this.ureq)
         .where('created_at', '>=', m1.toDate())
         .where('created_at', '<=', m2.toDate())
-        .where('status','==','0')
       query
       .get()
       .then(snapshot =>{
