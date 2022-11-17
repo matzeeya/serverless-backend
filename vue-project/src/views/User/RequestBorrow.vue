@@ -196,25 +196,7 @@
         const borrow = firestore.collection('borrows');
         borrow.add(data)
         .then(()=>{
-          Swal.fire({
-            title: 'บันทึกข้อมูลสำเร็จ',
-            icon: 'success'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.rmRequest((res) =>{
-                if(res === 'success'){
-                  liff.sendMessages([
-                    {
-                      'type' : 'text',
-                      'text' : 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ'
-                    }
-                  ]).then(() => {
-                    liff.closeWindow();
-                  })
-                }
-              })
-            }
-          })
+          this.rmRequest(this.items.doc);
         })
         .catch(err => console.log(err));
       },
@@ -224,7 +206,21 @@
         query
         .delete()
         .then(()=>{
-          console.log('rm success');
+          Swal.fire({
+            title: 'บันทึกข้อมูลสำเร็จ',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.sendMessages([
+                {
+                  'type' : 'text',
+                  'text' : 'อนุมัติรายการยืมเรียบร้อยแล้วค่ะ'
+                }
+              ]).then(() => {
+                liff.closeWindow();
+              })
+            }
+          })
         })
         .catch(err =>{
           console.log(err);

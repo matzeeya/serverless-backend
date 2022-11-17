@@ -124,13 +124,12 @@
         })
       },
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
-        for (let i = 0; i < localStorage.length; i++) {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
           const key = localStorage.key(i);
           if(key.search('item:') >= 0){
             localStorage.removeItem(key);
           }
         }
-        liff.closeWindow();
       },
       async submitHandler(){
         if(this.items.length > 0){
@@ -155,26 +154,7 @@
             if(res.type === '1'){
               this.queryDoc(obj);
             }else{
-              this.requestBorrow(obj, function(res) {
-                if(res === 'success'){
-                  Swal.fire({
-                    title: 'ยืมครุภัณฑ์',
-                    text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                    icon: 'success'
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      liff.sendMessages([
-                        {
-                          'type' : 'text',
-                          'text' : 'ส่งคำขอยืมครุภัณฑ์'
-                        }
-                      ]).then(()=>{
-                        this.cancelHandler();
-                      })
-                    }
-                  })
-                }
-              })
+              this.requestBorrow(obj);
             }
           })          
         }else{
@@ -214,11 +194,28 @@
           console.log(err);
         });
       },
-      requestBorrow(req,res){
+      requestBorrow(req){
         const docRef = firestore.collection('requestBorrow');
         docRef.add(req)
         .then(()=>{
-          res('success');
+          // console.log('request borrow success');
+          Swal.fire({
+            title: 'ยืมครุภัณฑ์',
+            text: 'ส่งคำขอรายการยืมครุภัณฑ์เรียบร้อยแล้วค่ะ',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.cancelHandler();
+              liff.sendMessages([
+                {
+                  'type' : 'text',
+                  'text' : 'ส่งคำขอยืมครุภัณฑ์'
+                }
+              ]).then(()=>{
+                liff.closeWindow();
+              });
+            }
+          })
         })
         .catch(err => console.log(err));
       },
@@ -262,13 +259,14 @@
             icon: 'success'
           }).then((result) => {
             if (result.isConfirmed) {
+              this.cancelHandler();
               liff.sendMessages([
                 {
                   'type' : 'text',
                   'text' : 'ยืมเรียบร้อยแล้วค่ะ'
                 }
               ]).then(() => {
-                this.cancelHandler();
+                liff.closeWindow();
               })
             }
           })
