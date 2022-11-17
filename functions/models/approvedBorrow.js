@@ -3,7 +3,7 @@ const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 
 // เชื่อมต่อ firebase
-const firestore = require('../../firebase-config/node/firebase');
+const firestore = require('../firebase-config/firebase');
 const config = require('../config');
 
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
@@ -28,7 +28,7 @@ const replyApprovedBorrow = (uid, payload) => {
 function getUid(resText) {
   const docRef = firestore.collection('borrows');
   const query = docRef
-    .orderBy('created_at','desc')
+    .orderBy('created_at', 'desc')
     .limit(1);
   query
   .get()
@@ -37,9 +37,9 @@ function getUid(resText) {
       snapshot.forEach((doc) => {
         console.log(resText);
         console.log(doc.id);
-        replyApprovedBorrow(doc.data().borrow_by,{ 
-          type: 'text', 
-          text: resText
+        replyApprovedBorrow(doc.data().borrow_by, {
+          type: 'text',
+          text: resText,
         });
       });
     }

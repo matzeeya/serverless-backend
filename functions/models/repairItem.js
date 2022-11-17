@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 // เชื่อมต่อ firebase
-const firestore = require('../../firebase-config/node/firebase');
+const firestore = require('../firebase-config/firebase');
 const config = require('../config');
 
 const LINE_MESSAGING_API = 'https://api.line.me/v2/bot';
