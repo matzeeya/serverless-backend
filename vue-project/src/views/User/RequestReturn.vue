@@ -256,11 +256,7 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryBorrowData(this.items[i].item_code,this.items[i].room,doc.data().room, function(res) {
-                if(res === 'success'){
-                  this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
-                }
-              }) // query ค่าในตาราง borrow 
+              this.queryBorrowData(doc.id,this.items[i].item_code,this.items[i].room,doc.data().room); // query ค่าในตาราง borrow 
             });
           })
           .catch(err =>{
@@ -269,14 +265,14 @@
         }
         this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
       },
-      queryBorrowData(id,room_at,room,callback){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+      queryBorrowData(id,code,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
         let updateStatus = {};
         let obj = [];
       
         const docRef = firestore.collection('borrows');
         const query = docRef
           .where('items','array-contains',{
-            'item_code': id,
+            'item_code': code,
             'room': room,
             'status': '0'
           });
@@ -301,11 +297,7 @@
                 }
               }
               updateStatus['items'] = obj;
-              this.updateBorrowStatus(doc.id,updateStatus, function(res) {
-                if(res === 'success'){
-                  callback('success');
-                }
-              }); // update สถานะในตาราง borrows
+              this.updateBorrowStatus(id,doc.id,updateStatus); // update สถานะในตาราง borrows
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -315,14 +307,14 @@
           console.log(err);
         }); 
       },
-      updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
+      updateBorrowStatus(itemid,docid,data){ // update สถานะในตาราง borrows
         const docRef = firestore.collection('borrows');
-        const query = docRef.doc(id)
+        const query = docRef.doc(docid)
         query
         .update(data)
         .then(()=>{
           // console.log('Updated Borrows Status Success!!');
-          res('success');
+          this.updateItemStatus(itemid,this.room_at[i],this.itemStatus[i]);
         })
         .catch(err =>{
           console.log(err);
