@@ -146,18 +146,15 @@
     },
     methods : {
       cancelHandler(){ // เมื่อคลิกปุ่ม ยกเลิก
-        this.rmRequest(this.items.doc,(res) =>{
-          if(res === 'success'){
-            liff.sendMessages([
-              {
-                'type' : 'text',
-                'text' : 'ไม่อนุมัติรายการคืนค่ะ'
-              }
-            ]).then(() => {
-              liff.closeWindow();
-            })
+        this.rmRequest(this.items.doc);
+        liff.sendMessages([
+          {
+            'type' : 'text',
+            'text' : 'ไม่อนุมัติรายการคืนค่ะ'
           }
-        })
+        ]).then(() => {
+          liff.closeWindow();
+        });
       },
       itemName(id, callback){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         const docRef = firestore.collection('items');
@@ -341,17 +338,14 @@
               icon: 'success'
             }).then((result) => {
               if (result.isConfirmed) {
-                this.rmRequest((res) =>{
-                  if(res === 'success'){
-                    liff.sendMessages([
-                      {
-                        'type' : 'text',
-                        'text' : 'อนุมัติรายการคืนเรียบร้อยแล้วค่ะ'
-                      }
-                    ]).then(() => {
-                      liff.closeWindow();
-                    })
+                this.rmRequest(this.items.doc);
+                liff.sendMessages([
+                  {
+                    'type' : 'text',
+                    'text' : 'อนุมัติรายการคืนเรียบร้อยแล้วค่ะ'
                   }
+                ]).then(() => {
+                  liff.closeWindow();
                 })
               }
             })
@@ -364,7 +358,7 @@
         query
         .delete()
         .then(()=>{
-          console.log('rm success');
+          
         })
         .catch(err =>{
           console.log(err);
