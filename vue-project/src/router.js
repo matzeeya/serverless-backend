@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
+import Test from './views/test.vue'
 import ViewData from './views/ViewData.vue'
 import AddBorrowList from './views/AddBorrowList.vue'
 import AddReturnList from './views/AddReturnList.vue'
@@ -48,6 +49,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test
   },
   {
     path: '/viewdata/:code',

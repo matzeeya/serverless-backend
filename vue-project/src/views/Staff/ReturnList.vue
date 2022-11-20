@@ -164,26 +164,7 @@
             if(res.type === '1'){
               this.queryDoc(obj);
             }else{
-              this.requestReturn(obj, function(res) {
-                if(res === 'success'){
-                  Swal.fire({
-                    title: 'คืนครุภัณฑ์',
-                    text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
-                    icon: 'success'
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      liff.sendMessages([
-                      {
-                        'type' : 'text',
-                        'text' : 'ส่งคำขอคืนครุภัณฑ์'
-                      }
-                      ]).then(() => {
-                        this.cancelHandler();
-                      })
-                    }
-                  })
-                }
-              })
+              this.requestReturn(obj) ;
             }
           })
         }else{
@@ -223,11 +204,26 @@
           console.log(err);
         });
       },
-      requestReturn(req,res){
+      requestReturn(req){
         const docRef = firestore.collection('requestReturn');
         docRef.add(req)
         .then(()=>{
-          res('success');
+          Swal.fire({
+            title: 'คืนครุภัณฑ์',
+            text: 'ส่งคำขอรายการคืนครุภัณฑ์เรียบร้อยแล้วค่ะ',
+            icon: 'success'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              liff.sendMessages([
+              {
+                'type' : 'text',
+                'text' : 'ส่งคำขอคืนครุภัณฑ์'
+              }
+              ]).then(() => {
+                this.cancelHandler();
+              })
+            }
+          })
         })
         .catch(err => console.log(err));
       },
@@ -241,8 +237,8 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryBorrowData(doc.id,this.items[i],this.room_at[i],doc.data().room); // query ค่าในตาราง borrow  
-              // this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]); // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+              this.queryBorrowData(this.items[i],this.room_at[i],doc.data().room); // query ค่าในตาราง borrow
+              this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status);
             });
           })
           .catch(err =>{
@@ -251,14 +247,14 @@
         }
         this.addReturn(data); // เพิ่มรายการคืนลงในตาราง returns
       },
-      queryBorrowData(id,code,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+      queryBorrowData(id,room_at,room,callback){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
         let updateStatus = {};
         let obj = [];
       
         const docRef = firestore.collection('borrows');
         const query = docRef
           .where('items','array-contains',{
-            'item_code': code,
+            'item_code': id,
             'room': room,
             'status': '0'
           });
@@ -283,7 +279,12 @@
                 }
               }
               updateStatus['items'] = obj;
-              this.updateBorrowStatus(id,doc.id,updateStatus); // update สถานะในตาราง borrows
+              this.updateBorrowStatus(doc.id,updateStatus,(res) => {
+                if(res){
+                  callback(true);
+                  this.queryDoc();
+                }
+              }); // update สถานะในตาราง borrows
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -293,14 +294,15 @@
           console.log(err);
         }); 
       },
-      updateBorrowStatus(itemid,docid,data){ // update สถานะในตาราง borrows
+      updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
         const docRef = firestore.collection('borrows');
-        const query = docRef.doc(docid)
+        const query = docRef.doc(id)
         query
         .update(data)
         .then(()=>{
-          // console.log('Updated Borrows Status Success!!');
-          this.updateItemStatus(itemid,this.room_at[i],this.itemStatus[i]);
+          console.log('Updated Borrows Status Success!!');
+          res(true);
+          // this.updateItemStatus(itemid,this.room_at[i],this.itemStatus[i]);
         })
         .catch(err =>{
           console.log(err);
