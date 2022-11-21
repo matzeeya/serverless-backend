@@ -27,7 +27,12 @@ export default {
         .get()
         .then(snapshot =>{
           snapshot.forEach((doc) => {
-            this.queryBorrowData(this.items[i].item_code,this.items[i].room,doc.data().room); // query ค่าในตาราง borrow
+            this.queryBorrowData(this.items[i].item_code,this.items[i].room,doc.data().room,(res)=>{
+              if(res){
+                console.log('queryDoc '+i);
+                this.queryDoc();
+              }
+            }); // query ค่าในตาราง borrow
             // this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status);
           });
         })
@@ -36,7 +41,7 @@ export default {
         });
       }
     },
-    queryBorrowData(code,room_at,room){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
+    queryBorrowData(code,room_at,room,callback){ // ค้นข้อมูลในตาราง borrows เพื่อคืนครุภัณฑ์
       let updateStatus = {};
       let obj = [];
     
@@ -68,7 +73,12 @@ export default {
               }
             }
             updateStatus['items'] = obj;
-            this.updateBorrowStatus(doc.id, updateStatus);
+            this.updateBorrowStatus(doc.id, updateStatus,(res)=>{
+              if(res){
+                console.log('queryBorrowData '+ doc.id);
+                callback(true);
+              }
+            });
           });
         }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
           console.log('ไม่สามารถคืนรายการได้');
@@ -78,14 +88,14 @@ export default {
         console.log(err);
       }); 
     },
-    updateBorrowStatus(id,data){ // update สถานะในตาราง borrows
+    updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
       const docRef = firestore.collection('borrows');
       const query = docRef.doc(id)
       query
       .update(data)
       .then(()=>{
-        console.log('update Borrow Status.');
-        this.queryDoc();
+        console.log('update Borrow Status.' + id);
+        res(true);
       })
       .catch(err =>{
         console.log(err);
