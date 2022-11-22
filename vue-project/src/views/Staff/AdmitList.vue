@@ -124,6 +124,38 @@
         }
         liff.closeWindow();
       },
+      checkRepairStatus(eof,res){
+        let code = this.items[eof].item_code;
+        let room = this.items[eof].room
+        const docRef = firestore.collection('item');
+        const query = docRef
+          .where('item_code','==',code)
+          .where('status','==','แจ้งซ่อม')
+        query
+        .get()
+        .then(snapshot =>{
+          if(!snapshot.empty){
+            const docRef = firestore.collection('repair');
+            const query = docRef
+              .where('items','array-contains',{
+                'item_code': code,
+                'room': room,
+                'status': '1'
+              });
+            query
+            .get()
+            .then(snapshot =>{
+              if(!snapshot.empty){
+                res('1');
+              }else{
+                res('0');
+              }
+            });
+          }else{
+            console.log('ไม่สามารถคืนรายการได้');
+          }
+        });
+      },
       queryDoc(data){ // ค้นหาข้อมูลครุภัณฑ์ในตาราง item
         for (let i = 0; i < this.items.length; i++) {
           const docRef = firestore.collection('items');
