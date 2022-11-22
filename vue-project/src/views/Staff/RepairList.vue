@@ -189,7 +189,7 @@
             created_at: new Date()
           };
 
-          let item = []
+          let item = [];
           for (let i = 0; i < this.items.length; i++) { // loop add ข้อมูลรายการแจ้งซ่อมลงใน data สำหรับไว้ add data ลงตาราง repair
             item[i] = {
               'item_code':this.items[i],
@@ -199,7 +199,7 @@
             }
           }
 
-          obj['items'] = item
+          obj['items'] = item;
           this.queryDoc(obj);
         }else{
           Swal.fire({

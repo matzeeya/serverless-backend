@@ -7,9 +7,9 @@ export default {
   data() {
     return {
       items: [
-        {'item_code':'7450-010-13400','room':'EE113','status':'ใช้งาน'},
-        {'item_code':'7450-010-13401','room':'EE113','status':'ใช้งาน'},
-        {'item_code':'7450-010-13402','room':'EE113','status':'ใช้งาน'}
+        {'item_code':'7450-010-13402','room':'EE113'},
+        {'item_code':'7450-010-13403','room':'EE113'},
+        {'item_code':'7450-010-13404','room':'EE113'}
       ]
     }
   },
@@ -23,12 +23,12 @@ export default {
       const docRef = firestore.collection('items');
         const query = docRef
           .where('item_code','==',code)
-          .where('status','==','ถูกยืม')
+          .where('status','==','แจ้งซ่อม')
         query
         .get()
         .then(snapshot =>{
           if(!snapshot.empty){
-            const docRef = firestore.collection('borrows');
+            const docRef = firestore.collection('repairs');
             const query = docRef
               .where('items','array-contains',{
                 'item_code': code,
@@ -54,7 +54,7 @@ export default {
         const docRef = firestore.collection('items');
         const query = docRef
           .where('item_code','==',this.items[i].item_code)
-          .where('status','==','ถูกยืม')
+          .where('status','==','แจ้งซ่อม')
         query
         .get()
         .then(snapshot =>{
@@ -65,7 +65,7 @@ export default {
                   if(res==='0'){
                     this.queryDoc();
                   }else{
-                    this.updateItemStatus(doc.id,this.items[i].room,this.items[i].status);
+                    // this.updateItemStatus(doc.id,this.items[i].room);
                   }
                 });
               }
@@ -81,7 +81,7 @@ export default {
       let updateStatus = {};
       let obj = [];
     
-      const docRef = firestore.collection('borrows');
+      const docRef = firestore.collection('repairs');
       const query = docRef
         .where('items','array-contains',{
           'item_code': code,
@@ -109,7 +109,7 @@ export default {
               }
             }
             updateStatus['items'] = obj;
-            // console.log('data ', updateStatus);
+            console.log('data ', updateStatus);
             this.updateBorrowStatus(doc.id,updateStatus,(res)=>{
               if(res){
                 // console.log('queryBorrowData '+ doc.id);
@@ -126,7 +126,7 @@ export default {
       }); 
     },
     updateBorrowStatus(id,data,res){ // update สถานะในตาราง borrows
-      const docRef = firestore.collection('borrows');
+      const docRef = firestore.collection('repairs');
       const query = docRef.doc(id)
       query
       .update(data)

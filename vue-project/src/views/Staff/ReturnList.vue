@@ -149,7 +149,7 @@
             created_at: new Date()
           };
 
-          let item = []
+          let item = [];
           for (let i = 0; i < this.items.length; i++) {
             item[i] = {
               'item_code':this.items[i],
@@ -158,7 +158,7 @@
             }
           }
 
-          obj['items'] = item
+          obj['items'] = item;
           
           this.checkType((res) =>{
             if(res.type === '1'){

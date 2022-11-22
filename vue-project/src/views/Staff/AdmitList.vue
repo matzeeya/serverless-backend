@@ -45,7 +45,6 @@
 </template>
 <script>
   import Swal from 'sweetalert2'
-  import ListAppearance from '../../components/ListAppearance.vue';
   import ListRoom from '../../components/ListRoom.vue';
 
   import firestore from '../../../../firebase-config/vue/firebase';
@@ -54,13 +53,11 @@
 
   export default {
     components: {
-      ListRoom,
-      ListAppearance
+      ListRoom
     },
     data() {
       return {
         userProfile: null,
-        itemStatus: [],
         items: [],
         delItem: [],
         room_at: []
@@ -135,7 +132,7 @@
         .get()
         .then(snapshot =>{
           if(!snapshot.empty){
-            const docRef = firestore.collection('repair');
+            const docRef = firestore.collection('repairs');
             const query = docRef
               .where('items','array-contains',{
                 'item_code': code,
@@ -166,8 +163,17 @@
           .get()
           .then(snapshot =>{
             snapshot.forEach((doc) => {
-              this.queryAdmitData(this.items[i],this.room_at[i],doc.data().room) // query ค่าในตาราง repair 
-              this.updateItemStatus(doc.id,this.room_at[i],this.itemStatus[i]) // update สถานะและสถานทีเก็บปัจจุบัน ตาราง items
+              this.queryAdmitData(this.items[i],this.room_at[i],doc.data().room,(res)=>{
+                if(res){
+                  this.checkRepairStatus(i,(res)=>{
+                    if(res==='0'){
+                      this.queryDoc();
+                    }else{
+                     this.updateItemStatus(doc.id,this.room_at[i]);
+                    }
+                  });
+                }
+              }); // query ค่าในตาราง borrow
             });
           })
           .catch(err =>{
@@ -176,7 +182,7 @@
         }
         this.addAdmit(data); // เพิ่มรายการคืนลงในตาราง admits
       },
-      queryAdmitData(id,room_at,room){ // ค้นข้อมูลในตาราง admits เพื่อคืนครุภัณฑ์
+      queryAdmitData(id,room_at,room,callback){ // ค้นข้อมูลในตาราง admits เพื่อคืนครุภัณฑ์
         let updateStatus = {};
         let obj = [];
       
@@ -208,7 +214,11 @@
                 }
               }
               updateStatus['items'] = obj;
-              this.updateRepairStatus(doc.id,updateStatus); // update สถานะในตาราง repairs
+              this.updateRepairStatus(doc.id,updateStatus,(res) => {
+                if(res){
+                  callback(true);
+                }
+              }); // update สถานะในตาราง repairs
             });
           }else{ // หากไม่พบข้อมูลไม่สามารถคืนได้
             console.log('ไม่สามารถคืนรายการได้')
@@ -218,13 +228,14 @@
           console.log(err);
         }); 
       },
-      updateRepairStatus(id,data){ // update สถานะในตาราง repairs
+      updateRepairStatus(id,data,res){ // update สถานะในตาราง repairs
         const docRef = firestore.collection('repairs');
         const query = docRef.doc(id)
         query
         .update(data)
         .then(()=>{
-          console.log('Updated Borrows Status Success!!');
+          // console.log('Updated Borrows Status Success!!');
+          res(true);
         })
         .catch(err =>{
           console.log(err);
