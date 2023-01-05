@@ -33,6 +33,7 @@ import SellList from './views/Staff/SellList.vue'
 import Verify from './views/Admin/UserVerify.vue'
 import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
+import AddUser from './views/Admin/AddUser.vue'
 
 import ViewBorrowList from './views/Report/ViewBorrowList.vue'
 
@@ -174,6 +175,11 @@ const routes = [
     path: '/addItem/:code',
     name: 'AddItemCode',
     component: AddItemCode
+  },
+  {
+    path: '/adduser',
+    name: 'AddUser',
+    component: AddUser
   },
   {
     path: '/movement/:code',

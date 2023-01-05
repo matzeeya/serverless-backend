@@ -1,7 +1,7 @@
 <template>
   <div></div>
 </template>
-<script>
+<script lang="js">
 const line = require('../../../../line-config/config')
 export default {
   name:'CheckItem',

@@ -1,18 +1,16 @@
 <template>
-  <b-field label="สิทธิผู้ใช้งาน">
   <div class="select">
     <select id="usertype"
       name="usertype"
       v-model="usertype"
       @change="getUserTypes(usertype)"
-      style="width:280px">
+      style="width:180px">
         <option v-for="usertype in types" 
           v-bind:key="usertype">
             {{usertype}}
         </option>
     </select>
   </div>
-</b-field>
 </template>
 <script>
 export default {
@@ -22,9 +20,8 @@ export default {
   data () {
     return {
       types: {
-        0:'user', 
-        1:'staff', 
-        2:'admin' 
+        0:'Not Active', 
+        1:'Actice'
       },
       usertype: null
     }

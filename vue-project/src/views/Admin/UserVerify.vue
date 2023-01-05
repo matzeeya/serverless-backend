@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script>
+<script lang="js">
 import Swal from 'sweetalert2';
 import firestore from "../../../../firebase-config/vue/firebase";
 const userRegister = firestore.collection("userRegister");
