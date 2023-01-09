@@ -34,7 +34,7 @@ function payload(userReq, uid) {
         },
         hero: {
           type: 'image',
-          url: 'https://matzeeya.github.io/LINEBOT-Inventory/images/Borrow.png',
+          url: 'https://matzeeya.github.io/LINEBOT-Inventory/images/register.png',
           size: 'full',
           aspectRatio: '20:13',
           aspectMode: 'fit',
@@ -56,7 +56,7 @@ function payload(userReq, uid) {
               contents: [
                 {
                   type: 'text',
-                  text: 'มีคำขอลงทะเบียนผู้ใช้งาน',
+                  text: 'มีคำขอยืนยันเข้าใช้งานระบบ',
                   size: 'sm',
                   gravity: 'top',
                 },
@@ -97,9 +97,9 @@ const replyRegisterRequest = (uid, payload) => {
 
 function getAdminUid(userReq) {
   const uid = [];
-  const docRef = firestore.collection('userRegister');
+  const docRef = firestore.collection('user');
   const query = docRef
-    .where('type', '==', 'staff');
+    .where('type', '==', 'admin');
   query
   .get()
   .then((snapshot) =>{

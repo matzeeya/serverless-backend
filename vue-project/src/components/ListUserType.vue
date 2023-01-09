@@ -4,7 +4,7 @@
     <select id="usertype"
       name="usertype"
       v-model="usertype"
-      @change="getUserTypes(usertype)"
+      @change="getUserType(usertype)"
       style="width:280px">
         <option v-for="usertype in types" 
           v-bind:key="usertype">
@@ -17,7 +17,7 @@
 <script>
 export default {
   props:{
-    getUserTypes:Function
+    getUserType:Function
   },
   data () {
     return {

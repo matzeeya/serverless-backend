@@ -30,7 +30,7 @@ import RepairList from './views/Staff/RepairList.vue'
 import AdmitList from './views/Staff/AdmitList.vue'
 import SellList from './views/Staff/SellList.vue'
 
-import Verify from './views/Admin/UserVerify.vue'
+import ApprovedUser from './views/Admin/ApprovedUser.vue'
 import AddItem from './views/Admin/AddItem.vue'
 import AddItemCode from './views/Admin/AddItemCode.vue'
 import AddUser from './views/Admin/AddUser.vue'
@@ -187,9 +187,9 @@ const routes = [
     component: Movement
   },
   {
-    path: '/verify/:ureq',
-    name: 'Verify',
-    component: Verify
+    path: '/approved/:ureq',
+    name: 'ApprovedUser',
+    component: ApprovedUser
   },
   {
     path: '/searchItem',

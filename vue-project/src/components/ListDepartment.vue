@@ -4,7 +4,7 @@
       <select id="department"
         name="department"
         v-model="department"
-        @change="getPrename(department)"
+        @change="getDepartment(department)"
         style="width:280px">
           <option v-for="department in dep" 
             v-bind:key="department">

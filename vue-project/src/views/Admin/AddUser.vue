@@ -182,7 +182,7 @@
         this.department = res
       },
       addUserRegister(obj){
-        const addUser = firestore.collection("userRegister");
+        const addUser = firestore.collection("user");
         addUser.add(obj)
           .then(()=>{
             Swal.fire({
@@ -196,6 +196,7 @@
                     'text' : 'ลงทะเบียนสำเร็จ'
                   }
                 ]).then(() => {
+                  this.clearData();
                   liff.closeWindow();
                 })
               }
@@ -222,8 +223,9 @@
           faculty:this.faculty,
           department:this.department,
           required:"0",
-          active:"0",
-          created_at:this.userProfile
+          active:"1",
+          created_by:this.userProfile,
+          created_at:new Date()
         };
         this.addUserRegister(obj);
       }

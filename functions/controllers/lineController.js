@@ -48,7 +48,7 @@ const linebot = async (req, res) => {
           sell.getdata(req, res, msg[1]);
         } else if (resText === 'ส่งคำขอยืมครุภัณฑ์') {
           reqBorrow.getAdminUid(userId);
-        } else if (resText === 'ลงทะเบียนสำเร็จ') {
+        } else if (resText === 'ยืนยันข้อมูล') {
           register.getAdminUid(userId);
         } else if (resText === 'ส่งคำขอคืนครุภัณฑ์') {
           reqReturn.getAdminUid(userId);

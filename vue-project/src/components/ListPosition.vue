@@ -44,7 +44,7 @@ data () {
   }
 },
 created() {
-  const userType = firestore.collection("user_type").orderBy("name","asc")
+  const userType = firestore.collection("position").orderBy("name","asc")
   userType.get().then(snapshot => {
     snapshot.forEach(doc => {
       if (doc.data()){
